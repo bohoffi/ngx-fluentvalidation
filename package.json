@@ -1,9 +1,7 @@
 {
-  "name": "@ngx-fluentvalidation/source",
-  "version": "0.0.0",
-  "license": "MIT",
+  "name": "ngx-fluentvalidation",
+  "license": "Apache-2.0",
   "scripts": {},
-  "private": true,
   "dependencies": {
     "@angular/animations": "~16.1.0",
     "@angular/common": "~16.1.0",
