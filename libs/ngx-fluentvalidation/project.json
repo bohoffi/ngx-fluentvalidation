@@ -40,11 +40,7 @@
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "libs/ngx-fluentvalidation/**/*.ts",
-          "libs/ngx-fluentvalidation/**/*.html",
-          "libs/ngx-fluentvalidation/package.json"
-        ]
+        "lintFilePatterns": ["libs/ngx-fluentvalidation/**/*.ts", "libs/ngx-fluentvalidation/**/*.html"]
       }
     }
   }
