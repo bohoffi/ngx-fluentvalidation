@@ -1,7 +1,7 @@
 # ngx-fluentvalidation
 
-This library was generated with [Nx](https://nx.dev).
-
-## Running unit tests
-
-Run `nx test ngx-fluentvalidation` to execute the unit tests.
+- [x] base validator implementation
+  - [x] set of rules for non iterable properties
+  - [ ] set of rules for iterable properties
+  - [ ] pass a validator as a rule
+- [x] base rule implementation
