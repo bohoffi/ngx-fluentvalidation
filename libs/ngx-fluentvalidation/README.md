@@ -7,4 +7,5 @@
   - [ ] inline validator creation
   - [ ] Rule set like in .NET
   - [ ] valiadate options to validate specific subset
+  - [ ] Cascading of rules (break on first fail)
 - [x] base rule implementation

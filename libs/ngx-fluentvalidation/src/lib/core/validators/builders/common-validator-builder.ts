@@ -4,6 +4,7 @@ import { IsNotNullRule } from '../../../base/rules/common/is-not-null-rule';
 import { Rule } from '../../rules/rule';
 import { Validator } from '../validator';
 import { IsNullRule } from '../../../base/rules/common/is-null-rule';
+import { PredicateRule } from '../../../base/rules/common/predicate-rule';
 
 function hasPropertyName(value?: unknown): value is { propertyName: string } {
   return !!value && typeof value === 'object' && 'propertyName' in value;
@@ -31,6 +32,11 @@ export class CommonValidatorBuilder<T = unknown> {
 
   notEquals(referenceValue: T): this {
     this.addRule(new NotEqualsRule(referenceValue));
+    return this;
+  }
+
+  must(predicate: (value: T) => boolean): this {
+    this.addRule(new PredicateRule(predicate));
     return this;
   }
 
