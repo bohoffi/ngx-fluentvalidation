@@ -4,6 +4,7 @@
   - [x] set of rules for non iterable properties
   - [ ] set of rules for iterable properties
   - [x] pass a validator as a rule
+  - [ ] pass an AbstractValidator instance for a property
   - [ ] inline validator creation
   - [ ] Rule set like in .NET
   - [ ] valiadate options to validate specific subset

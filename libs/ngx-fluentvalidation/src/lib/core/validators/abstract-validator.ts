@@ -12,6 +12,8 @@ export abstract class AbstractValidator<T> implements Validatable<T>, Validator<
   protected rules: Rule<T>[] = [];
   protected propertyValidators: PropertyValidator[] = [];
   protected result: ValidationResult<T> | null = null;
+  protected validateWhen: ((value: T) => boolean) | null = null;
+  protected validateUnless: ((value: T) => boolean) | null = null;
 
   public get validationResult(): ValidationResult<T> | null {
     return this.result;
@@ -20,6 +22,15 @@ export abstract class AbstractValidator<T> implements Validatable<T>, Validator<
   addRule(rule: Rule<T>, propertyName?: string): this {
     rule.withPropertyName(propertyName);
     this.rules = this.rules.concat(rule);
+    return this;
+  }
+
+  when(predicate: (value: T) => boolean): this {
+    this.validateWhen = predicate;
+    return this;
+  }
+  unless(predicate: (value: T) => boolean): this {
+    this.validateUnless = predicate;
     return this;
   }
 
@@ -45,6 +56,10 @@ export abstract class AbstractValidator<T> implements Validatable<T>, Validator<
   }
 
   validate(value: T): boolean {
+    // break when conditions not satisfied
+    if ((this.validateWhen && this.validateWhen(value) === false) || (this.validateUnless && this.validateUnless(value) === true)) {
+      return true;
+    }
     const ruleResult = this.rules.map(r => r.validate(value)).every(r => r);
     const propValResult = this.propertyValidators
       .map(pv => pv.validate(value ? value[pv.propertyName as KeyOf<T>] : undefined))
@@ -56,7 +71,7 @@ export abstract class AbstractValidator<T> implements Validatable<T>, Validator<
 
   private createPropertyValidator<K extends KeyOf<T>, U>(propertyName: K): PropertyValidator<U> {
     const propertyValidator = PropertyValidator.forProperty<T, U>(propertyName);
-    this.propertyValidators = this.propertyValidators.concat(propertyValidator);
+    this.propertyValidators = this.propertyValidators.concat(propertyValidator as PropertyValidator<unknown>);
     return propertyValidator;
   }
 

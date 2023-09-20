@@ -83,4 +83,38 @@ describe(AbstractValidator.name, () => {
     const result = testValidator.validationResult;
     expect(result?.errors[0].propertyName).toEqual(propertyName);
   });
+
+  it('`when` should  run validation as long as a certain condition is fulfilled', () => {
+    const sut: Person = {
+      forename: 'Jo',
+      surname: 'Doe'
+    };
+
+    testValidator
+      .forString('forename')
+      .equals('Jon')
+      .when(value => value.length === 3);
+    let result = testValidator.validate(sut);
+    expect(result).toBe(true);
+    sut.forename = 'Bob';
+    result = testValidator.validate(sut);
+    expect(result).toBe(false);
+  });
+
+  it('`unless` should  run validation validation until a certain condition is fulfilled', () => {
+    const sut: Person = {
+      forename: 'Bob',
+      surname: 'Doe'
+    };
+
+    testValidator
+      .forString('forename')
+      .equals('Jon')
+      .unless(value => value.length === 3);
+    let result = testValidator.validate(sut);
+    expect(result).toBe(true);
+    sut.forename = 'Jo';
+    result = testValidator.validate(sut);
+    expect(result).toBe(false);
+  });
 });

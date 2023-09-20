@@ -60,6 +60,16 @@ export class CommonValidatorBuilder<T = unknown> {
     return this;
   }
 
+  when(predicate: (value: T) => boolean): this {
+    this.validator.when(predicate);
+    return this;
+  }
+
+  unless(predicate: (value: T) => boolean): this {
+    this.validator.unless(predicate);
+    return this;
+  }
+
   protected addRule(rule: Rule<T>): void {
     this.lastRule = rule;
     if (hasPropertyName(this.validator)) {
