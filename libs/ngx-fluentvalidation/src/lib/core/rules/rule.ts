@@ -1,7 +1,8 @@
-import { Validator } from '../validators/validator';
+import { ValidationFailure } from '../result/validation-failure';
+import { Validatable } from '../validators/validatable';
 
-export interface Rule<T> extends Validator<T> {
+export interface Rule<T> extends Validatable<T> {
   errorMessage: string;
-  validationFailure: ValidationFailure<T> | null;
-  withPropertyName(propertyName: string): this;
+  validationFailure: ValidationFailure | null;
+  withPropertyName(propertyName?: string): this;
 }

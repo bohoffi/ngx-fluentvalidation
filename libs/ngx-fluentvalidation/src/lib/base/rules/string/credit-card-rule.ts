@@ -1,7 +1,7 @@
-import { AbstractRule } from '../../core/rules/abstract-rule';
+import { AbstractRule } from '../../../core/rules/abstract-rule';
 
 // using the Luhn algorythm
-export class CreditCardValidationRule extends AbstractRule<string> {
+export class CreditCardRule extends AbstractRule<string> {
   constructor() {
     super('Value is not a valid credit card number.', value => this.validateInternal(value));
   }

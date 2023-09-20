@@ -1,3 +1,5 @@
-export interface Validator<T> {
-  validate(value: T): boolean;
+import { Rule } from '../rules/rule';
+
+export interface Validator<T = unknown> {
+  addRule(rule: Rule<T>, propertyName?: string): this;
 }

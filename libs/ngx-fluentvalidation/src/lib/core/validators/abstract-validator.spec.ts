@@ -1,53 +1,86 @@
 import { AbstractValidator } from './abstract-validator';
-import { AbstractRule } from '../rules/abstract-rule';
 
-interface TestEntity {
-  name: string;
-  firstName: string;
-  age: number;
+interface Person {
+  surname: string;
+  forename: string;
   address?: Address;
 }
 
 interface Address {
-  street: string;
-  country: string;
+  line1: string;
+  line2: string;
 }
 
-class EmptyRuleValidator extends AbstractValidator<TestEntity> {}
-
-class FirstnameNotJonRule extends AbstractRule<string> {
-  constructor() {
-    super('Firstname should not be Jon', firstname => firstname !== 'Jon');
-  }
-}
-
-class RuleValidator extends AbstractValidator<TestEntity> {
-  constructor() {
-    super();
-    this.for('firstName').addRule(new FirstnameNotJonRule());
-  }
-}
+class TestValidator extends AbstractValidator<Person> {}
 
 describe(AbstractValidator.name, () => {
-  it('should return valid when no rules applied', () => {
-    const sut: TestEntity = {
-      firstName: 'Jon',
-      name: 'Doe',
-      age: 18
+  let testValidator: TestValidator;
+
+  beforeEach(() => {
+    testValidator = new TestValidator();
+  });
+
+  it('`validate` should return `true` when no rules applied', () => {
+    const sut: Person = {
+      forename: 'Jon',
+      surname: 'Doe'
     };
 
-    const result = new EmptyRuleValidator().validate(sut);
+    const result = testValidator.validate(sut);
     expect(result).toBe(true);
   });
 
-  it('should return invalid when a rule hits', () => {
-    const sut: TestEntity = {
-      firstName: 'Jon',
-      name: 'Doe',
-      age: 18
+  it('`validate` should return `false` when a rule fails', () => {
+    const sut: Person = {
+      forename: 'Jon',
+      surname: 'Doe'
     };
 
-    const result = new RuleValidator().validate(sut);
+    testValidator.forString('forename').notEquals('Jon');
+
+    const result = testValidator.validate(sut);
     expect(result).toBe(false);
+  });
+
+  it('`result` should contain the errors when a rule fails', () => {
+    const sut: Person = {
+      forename: 'Jon',
+      surname: 'Doe'
+    };
+
+    testValidator.forString('forename').notEquals('Jon');
+
+    testValidator.validate(sut);
+    const result = testValidator.validationResult;
+    expect(result).not.toBeNull();
+    expect(result?.errors).toHaveLength(1);
+  });
+
+  it('`withErrorMessage` should overwrite rules error message', () => {
+    const sut: Person = {
+      forename: 'Jon',
+      surname: 'Doe'
+    };
+
+    const errorMessage = 'Please choose another forename';
+    testValidator.forString('forename').notEquals('Jon').withErrorMessage(errorMessage);
+
+    testValidator.validate(sut);
+    const result = testValidator.validationResult;
+    expect(result?.errors[0].errorMessage).toEqual(errorMessage);
+  });
+
+  it('`withPropertyName` should overwrite rules property name', () => {
+    const sut: Person = {
+      forename: 'Jon',
+      surname: 'Doe'
+    };
+
+    const propertyName = 'firstName';
+    testValidator.forString('forename').notEquals('Jon').withPropertyName(propertyName);
+
+    testValidator.validate(sut);
+    const result = testValidator.validationResult;
+    expect(result?.errors[0].propertyName).toEqual(propertyName);
   });
 });
