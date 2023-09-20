@@ -2,19 +2,19 @@ import { HasLengthRule } from '../../../base/rules/length/has-length-rule';
 import { HasMaxLengthRule } from '../../../base/rules/length/has-max-length-rule';
 import { HasMinLengthRule } from '../../../base/rules/length/has-min-length-rule';
 import { CreditCardRule } from '../../../base/rules/string/credit-card-rule';
-import { StringIsEmptyRule } from '../../../base/rules/string/is-empty-rule';
-import { StringNotEmptyRule } from '../../../base/rules/string/not-empty-rule';
-import { RegexpRule } from '../../../base/rules/string/regexp-rule';
+import { IsEmptyRule } from '../../../base/rules/string/is-empty-rule';
+import { NotEmptyRule } from '../../../base/rules/string/not-empty-rule';
+import { RegExpRule } from '../../../base/rules/string/reg-exp-rule';
 import { CommonValidatorBuilder } from './common-validator-builder';
 
 export class StringValidatorBuilder extends CommonValidatorBuilder<string> {
   isEmpty(): this {
-    this.addRule(new StringIsEmptyRule());
+    this.addRule(new IsEmptyRule());
     return this;
   }
 
   notEmpty(): this {
-    this.addRule(new StringNotEmptyRule());
+    this.addRule(new NotEmptyRule());
     return this;
   }
 
@@ -39,7 +39,7 @@ export class StringValidatorBuilder extends CommonValidatorBuilder<string> {
   }
 
   regexp(regexp: RegExp): this {
-    this.addRule(new RegexpRule(regexp));
+    this.addRule(new RegExpRule(regexp));
     return this;
   }
 }

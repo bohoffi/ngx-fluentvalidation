@@ -11,11 +11,11 @@ import { DateValidatorBuilder } from './builders/date-validator-builder';
 export abstract class AbstractValidator<T> implements Validatable<T>, Validator<T> {
   protected rules: Rule<T>[] = [];
   protected propertyValidators: PropertyValidator[] = [];
-  protected result: ValidationResult<T> | null = null;
+  protected result: ValidationResult | null = null;
   protected validateWhen: ((value: T) => boolean) | null = null;
   protected validateUnless: ((value: T) => boolean) | null = null;
 
-  public get validationResult(): ValidationResult<T> | null {
+  public get validationResult(): ValidationResult | null {
     return this.result;
   }
 
