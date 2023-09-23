@@ -36,7 +36,7 @@ describe(AbstractValidator.name, () => {
       surname: 'Doe'
     };
 
-    testValidator.forString('forename').notEquals('Jon');
+    testValidator.for('forename').notEqual('Jon');
 
     const result = testValidator.validate(sut);
     expect(result).toBe(false);
@@ -48,7 +48,7 @@ describe(AbstractValidator.name, () => {
       surname: 'Doe'
     };
 
-    testValidator.forString('forename').notEquals('Jon');
+    testValidator.for('forename').notEqual('Jon');
 
     testValidator.validate(sut);
     const result = testValidator.validationResult;
@@ -63,7 +63,7 @@ describe(AbstractValidator.name, () => {
     };
 
     const errorMessage = 'Please choose another forename';
-    testValidator.forString('forename').notEquals('Jon').withErrorMessage(errorMessage);
+    testValidator.for('forename').notEqual('Jon').withMessage(errorMessage);
 
     testValidator.validate(sut);
     const result = testValidator.validationResult;
@@ -77,7 +77,7 @@ describe(AbstractValidator.name, () => {
     };
 
     const propertyName = 'firstName';
-    testValidator.forString('forename').notEquals('Jon').withPropertyName(propertyName);
+    testValidator.for('forename').notEqual('Jon').withName(propertyName);
 
     testValidator.validate(sut);
     const result = testValidator.validationResult;
@@ -91,9 +91,9 @@ describe(AbstractValidator.name, () => {
     };
 
     testValidator
-      .forString('forename')
-      .equals('Jon')
-      .when(value => value.length === 3);
+      .for('forename')
+      .equal('Jon')
+      .when(model => model.forename.length === 3);
     let result = testValidator.validate(sut);
     expect(result).toBe(true);
     sut.forename = 'Bob';
@@ -108,9 +108,9 @@ describe(AbstractValidator.name, () => {
     };
 
     testValidator
-      .forString('forename')
-      .equals('Jon')
-      .unless(value => value.length === 3);
+      .for('forename')
+      .equal('Jon')
+      .unless(model => model.forename.length === 3);
     let result = testValidator.validate(sut);
     expect(result).toBe(true);
     sut.forename = 'Jo';

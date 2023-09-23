@@ -1,8 +1,7 @@
 import { AbstractRule } from '../../../core/rules/abstract-rule';
-import { Nullable } from '../../../core/types';
 
-export class NotEmptyRule extends AbstractRule<Nullable<string>> {
+export class NotEmptyRule<T> extends AbstractRule<T> {
   constructor() {
-    super('Value should not be empty.', value => !!value && value !== '');
+    super('Value should not be empty.', value => !!value);
   }
 }

@@ -1,12 +1,11 @@
 import { ValidationFailure } from '../result/validation-failure';
 import { ValidationResult } from '../result/validation-result';
 import { Rule } from '../rules/rule';
-import { KeyOf, KeyOfType } from '../types';
+import { KeyOf } from '../types';
 import { Validatable } from './validatable';
 import { Validator } from './validator';
-import { StringValidatorBuilder } from './builders/string-validator-builder';
-import { NumberValidatorBuilder } from './builders/number-validator-builder';
-import { DateValidatorBuilder } from './builders/date-validator-builder';
+import { TypeValidator } from './typed/typed-validators';
+import { ValidationBuilder } from './builders/validator-builder';
 
 export abstract class AbstractValidator<T> implements Validatable<T>, Validator<T> {
   protected rules: Rule<T>[] = [];
@@ -34,25 +33,9 @@ export abstract class AbstractValidator<T> implements Validatable<T>, Validator<
     return this;
   }
 
-  // TODO builder chain is broken by optional properties
-  // for<K extends KeyOf<T>>(propertyName: K): PropertyValidator<T[K]> {
-  //   return this.createPropertyValidator<K, T[K]>(propertyName);
-  // }
-  // TODO fixes builder chain but validation execution breaks when accessing props of undefined
-  for<K extends KeyOf<T>>(propertyName: K): PropertyValidator<NonNullable<T[K]>> {
-    return this.createPropertyValidator<K, NonNullable<T[K]>>(propertyName);
-  }
-
-  forString<K extends KeyOfType<T, string>>(propertyName: K): StringValidatorBuilder {
-    return new StringValidatorBuilder(this.createPropertyValidator(propertyName));
-  }
-
-  forNumber<K extends KeyOfType<T, number>>(propertyName: K): NumberValidatorBuilder {
-    return new NumberValidatorBuilder(this.createPropertyValidator(propertyName));
-  }
-
-  forDate<K extends KeyOfType<T, Date>>(propertyName: K): DateValidatorBuilder {
-    return new DateValidatorBuilder(this.createPropertyValidator(propertyName));
+  for<K extends KeyOf<T>>(propertyName: K): TypeValidator<T, T[K]> {
+    const validatorBuilder = new ValidationBuilder<T, T[K]>(this.createPropertyValidator(propertyName));
+    return validatorBuilder.getAllRules() as unknown as TypeValidator<T, T[K]> as any;
   }
 
   validate(value: T): boolean {
