@@ -3,17 +3,17 @@ import { IsNotNullRule } from '../../../base/rules/common/is-not-null-rule';
 import { IsNullRule } from '../../../base/rules/common/is-null-rule';
 import { NotEqualsRule } from '../../../base/rules/common/not-equals-rule';
 import { IsPositiveRule } from '../../../base/rules/number/is-positive-rule';
+import { LessThanRule } from '../../../base/rules/number/less-than-rule';
+import { ValidatorRule } from '../../../base/rules/object/validator-rule';
 import { NotEmptyRule } from '../../../base/rules/string/not-empty-rule';
-import { Rule } from '../../rules/rule';
-import { Validator } from '../validator';
+import { PropertyRule } from '../../rules/validation-rule';
+import { ApplyConditionTo } from '../../types';
+import { IPropertyValidator, IValidator } from '../interfaces';
 
-function hasPropertyName(value?: unknown): value is { propertyName: string } {
-  return !!value && typeof value === 'object' && 'propertyName' in value;
-}
 abstract class AbstractValidatorBuilder<TModel, TProperty> {
-  private lastRule: Rule<TProperty> | null = null;
+  private lastRule: PropertyRule<TModel, TProperty> | null = null;
 
-  constructor(private readonly validator: Validator<TProperty>) {}
+  constructor(private readonly validator: IPropertyValidator<TModel, TProperty>) {}
 
   protected getTypeRules() {
     return {
@@ -65,9 +65,7 @@ abstract class AbstractValidatorBuilder<TModel, TProperty> {
 
   // extensions
   public withMessage = (message: string) => {
-    if (this.lastRule) {
-      this.lastRule.errorMessage = message;
-    }
+    this.lastRule?.withCustomMessage(message);
     return {
       ...this.getAllRules(),
       when: this.when,
@@ -76,9 +74,7 @@ abstract class AbstractValidatorBuilder<TModel, TProperty> {
   };
 
   public withName = (propertyName: string) => {
-    if (this.lastRule) {
-      this.lastRule.withPropertyName(propertyName);
-    }
+    this.lastRule?.withPropertyName(propertyName);
     return {
       ...this.getAllRules(),
       when: this.when,
@@ -87,34 +83,41 @@ abstract class AbstractValidatorBuilder<TModel, TProperty> {
   };
 
   // conditions
-  public when = (condition: (model: TModel) => boolean) => {
-    // TODO update interface
-    // this.validator.when(condition);
+  public when = (condition: (model: TModel) => boolean, applyConditionTo: ApplyConditionTo = 'AllValidators') => {
+    if (applyConditionTo === 'AllValidators') {
+      this.validator.validationRules.forEach(rule => rule.withWhenCondition(condition));
+    } else {
+      this.lastRule?.withWhenCondition(condition);
+    }
     return this.getAllRules();
   };
-  public unless = (condition: (model: TModel) => boolean) => {
-    // TODO update interface
-    // this.validator.unless(condition);
+  public unless = (condition: (model: TModel) => boolean, applyConditionTo: ApplyConditionTo = 'AllValidators') => {
+    if (applyConditionTo === 'AllValidators') {
+      this.validator.validationRules.forEach(rule => rule.withUnlessCondition(condition));
+    } else {
+      this.lastRule?.withUnlessCondition(condition);
+    }
     return this.getAllRules();
   };
 
   // common rules
   public isNull = () => {
-    this.addRule(new IsNullRule<TProperty>());
+    this.addRule(new IsNullRule());
     return this.getRulesWithExtensionsAndConditions();
   };
   public notNull = () => {
-    this.addRule(new IsNotNullRule<TProperty>());
+    this.addRule(new IsNotNullRule());
     return this.getRulesWithExtensionsAndConditions();
   };
   public equal = (referenceValue: TProperty) => {
-    this.addRule(new EqualsRule(referenceValue));
+    this.addRule(new EqualsRule<TModel, TProperty>(referenceValue));
     return this.getRulesWithExtensionsAndConditions();
   };
   public notEqual = (referenceValue: TProperty) => {
     this.addRule(new NotEqualsRule(referenceValue));
     return this.getRulesWithExtensionsAndConditions();
   };
+  // TODO define
   public must = (predicate: (model: TModel, value: TProperty) => boolean) => {
     return this.getRulesWithExtensionsAndConditions();
   };
@@ -130,20 +133,20 @@ abstract class AbstractValidatorBuilder<TModel, TProperty> {
     this.addRule(new IsPositiveRule());
     return this.getRulesWithExtensionsAndConditions();
   };
-
-  // object rules
-  public setValidator = () => {
-    // TODO figure out
+  public lessThan = (referenceValue: number) => {
+    this.addRule(new LessThanRule(referenceValue));
     return this.getRulesWithExtensionsAndConditions();
   };
 
-  public addRule(rule: Rule<TProperty>): void {
+  // object rules
+  public setValidator = (validator: IValidator<TProperty>) => {
+    this.addRule(new ValidatorRule(validator));
+    return this.getRulesWithExtensionsAndConditions();
+  };
+
+  public addRule(rule: PropertyRule<TModel, TProperty>): void {
     this.lastRule = rule;
-    if (hasPropertyName(this.validator)) {
-      this.validator.addRule(rule, this.validator.propertyName);
-    } else {
-      this.validator.addRule(rule);
-    }
+    this.validator.addRule(rule);
   }
 }
 

@@ -1,7 +1,12 @@
-import { AbstractRule } from '../../../core/rules/abstract-rule';
+import { PropertyRule } from '../../../core/rules/validation-rule';
 
-export class GreaterThanRule extends AbstractRule<number> {
+export class GreaterThanRule<TModel, TProperty> extends PropertyRule<TModel, TProperty> {
   constructor(private readonly referenceValue: number) {
-    super(`Value must be greater than '${referenceValue}'.`, value => value > this.referenceValue);
+    super(value => {
+      if (typeof value !== 'number') {
+        throw new TypeError('Passed a non-numeric value to a numeric rule.');
+      }
+      return value > this.referenceValue;
+    }, `Value must be greater than '${referenceValue}'.`);
   }
 }

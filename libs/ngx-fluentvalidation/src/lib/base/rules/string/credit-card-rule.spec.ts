@@ -1,20 +1,28 @@
 import { CreditCardRule } from './credit-card-rule';
 
+interface Sut {
+  creditCard: string;
+}
+
 describe(CreditCardRule.name, () => {
   it('`validate` should return `true` if value fulfills the rule', () => {
-    const sut = '5105105105105100';
+    const sut: Sut = {
+      creditCard: '5105105105105100'
+    };
     const rule = new CreditCardRule();
 
-    const ruleResult = rule.validate(sut);
+    const ruleResult = rule.validate(sut.creditCard, sut);
     expect(ruleResult).toBe(true);
     expect(rule.validationFailure).toBeNull();
   });
 
   it('`validate` should return `false` and contains a failure if value does not fulfill the rule', () => {
-    const sut = '5105105105105196';
+    const sut: Sut = {
+      creditCard: '5105105105105196'
+    };
     const rule = new CreditCardRule();
 
-    const ruleResult = rule.validate(sut);
+    const ruleResult = rule.validate(sut.creditCard, sut);
     expect(ruleResult).toBe(false);
     const ruleFailure = rule.validationFailure;
     expect(ruleFailure).not.toBeNull();

@@ -1,81 +1,67 @@
-import { ValidationFailure } from '../result/validation-failure';
 import { ValidationResult } from '../result/validation-result';
-import { Rule } from '../rules/rule';
 import { KeyOf } from '../types';
-import { Validatable } from './validatable';
-import { Validator } from './validator';
 import { TypeValidator } from './typed/typed-validators';
 import { ValidationBuilder } from './builders/validator-builder';
+import { PropertyRule } from '../rules/validation-rule';
+import { IPropertyValidator, IValidator } from './interfaces';
+import { ValidationFailure } from '../result/validation-failure';
 
-export abstract class AbstractValidator<T> implements Validatable<T>, Validator<T> {
-  protected rules: Rule<T>[] = [];
-  protected propertyValidators: PropertyValidator[] = [];
+export abstract class AbstractValidator<TModel> implements IValidator<TModel> {
+  protected propertyValidators: PropertyValidator<TModel, TModel[KeyOf<TModel>]>[] = [];
   protected result: ValidationResult | null = null;
-  protected validateWhen: ((value: T) => boolean) | null = null;
-  protected validateUnless: ((value: T) => boolean) | null = null;
 
   public get validationResult(): ValidationResult | null {
     return this.result;
   }
 
-  addRule(rule: Rule<T>, propertyName?: string): this {
-    rule.withPropertyName(propertyName);
-    this.rules = this.rules.concat(rule);
-    return this;
+  for<PropertyName extends KeyOf<TModel>, TProperty extends TModel[PropertyName]>(
+    propertyName: PropertyName
+  ): TypeValidator<TModel, TProperty> {
+    const propertyValidator = new PropertyValidator<TModel, TModel[KeyOf<TModel>]>(propertyName);
+    this.propertyValidators.push(propertyValidator);
+    const validatorBuilder = new ValidationBuilder<TModel, TProperty>(propertyValidator);
+    return validatorBuilder.getAllRules() as unknown as TypeValidator<TModel, TProperty>;
   }
 
-  when(predicate: (value: T) => boolean): this {
-    this.validateWhen = predicate;
-    return this;
-  }
-  unless(predicate: (value: T) => boolean): this {
-    this.validateUnless = predicate;
-    return this;
-  }
-
-  for<K extends KeyOf<T>>(propertyName: K): TypeValidator<T, T[K]> {
-    const validatorBuilder = new ValidationBuilder<T, T[K]>(this.createPropertyValidator(propertyName));
-    return validatorBuilder.getAllRules() as unknown as TypeValidator<T, T[K]> as any;
-  }
-
-  validate(value: T): boolean {
-    // break when conditions not satisfied
-    if ((this.validateWhen && this.validateWhen(value) === false) || (this.validateUnless && this.validateUnless(value) === true)) {
-      return true;
-    }
-    const ruleResult = this.rules.map(r => r.validate(value)).every(r => r);
-    const propValResult = this.propertyValidators
-      .map(pv => pv.validate(value ? value[pv.propertyName as KeyOf<T>] : undefined))
-      .every(r => r);
-    const result = ruleResult && propValResult;
-    this.result = result ? null : new ValidationResult(this.collectFailures());
-    return result;
-  }
-
-  private createPropertyValidator<K extends KeyOf<T>, U>(propertyName: K): PropertyValidator<U> {
-    const propertyValidator = PropertyValidator.forProperty<T, U>(propertyName);
-    this.propertyValidators = this.propertyValidators.concat(propertyValidator as PropertyValidator<unknown>);
-    return propertyValidator;
-  }
-
-  private collectFailures(): ValidationFailure[] {
-    return this.rules
-      .map(r => r.validationFailure)
-      .concat(this.propertyValidators.map(pv => pv.validationFailure))
-      .filter((f): f is ValidationFailure => f !== null);
+  validate(value: TModel): boolean {
+    const validationFailed = this.propertyValidators
+      .map(validator => validator.validateProperty(value[validator.propertyName], value))
+      .some(result => result === false);
+    this.result = validationFailed
+      ? new ValidationResult(
+          this.propertyValidators
+            .map(validator => validator.result)
+            .filter((result): result is ValidationResult => result instanceof ValidationResult)
+            .flatMap(result => result.errors)
+        )
+      : null;
+    return validationFailed === false;
   }
 }
 
-export class PropertyValidator<TProperty = unknown> extends AbstractValidator<TProperty> {
-  public get validationFailure(): ValidationFailure | null {
-    return this.validationResult?.errors?.length ? this.validationResult.errors.slice(0, 1)[0] : null;
+export class PropertyValidator<TModel, TProperty> extends AbstractValidator<TProperty> implements IPropertyValidator<TModel, TProperty> {
+  private _rules: PropertyRule<TModel, TProperty>[] = [];
+
+  public get validationRules(): PropertyRule<TModel, TProperty>[] {
+    return this._rules.slice();
   }
 
-  static forProperty<T, TProperty>(propertyName: KeyOf<T>): PropertyValidator<TProperty> {
-    return new PropertyValidator<TProperty>(propertyName);
-  }
-
-  protected constructor(public readonly propertyName: string) {
+  constructor(public readonly propertyName: KeyOf<TModel>) {
     super();
+  }
+
+  public addRule(rule: PropertyRule<TModel, TProperty>): void {
+    rule.withPropertyName(this.propertyName);
+    this._rules = this._rules.concat(rule);
+  }
+
+  validateProperty(value: TProperty, model: TModel): boolean {
+    const validationFailed = this.validationRules.map(rule => rule.validate(value, model)).some(result => result === false);
+    this.result = validationFailed
+      ? new ValidationResult(
+          this.validationRules.map(rule => rule.validationFailure).filter((failure): failure is ValidationFailure => !!failure)
+        )
+      : null;
+    return validationFailed === false;
   }
 }

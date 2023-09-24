@@ -1,14 +1,14 @@
-import { AbstractRule } from '../../../core/rules/abstract-rule';
+import { PropertyRule } from '../../../core/rules/validation-rule';
 
 // using the Luhn algorythm
-export class CreditCardRule extends AbstractRule<string> {
+export class CreditCardRule<TModel, TProperty> extends PropertyRule<TModel, TProperty> {
   constructor() {
-    super('Value is not a valid credit card number.', value => this.validateInternal(value));
+    super(value => this.validateInternal(value), 'Value is not a valid credit card number.');
   }
 
-  private validateInternal(candidate: string): boolean {
-    if (candidate === null) {
-      return true;
+  private validateInternal(candidate: TProperty | null | undefined): boolean | null {
+    if (typeof candidate !== 'string') {
+      return null;
     }
     // Remove whitespace and other characters from the input
     const trimmedNumber = candidate.replace(/\s+/g, '');

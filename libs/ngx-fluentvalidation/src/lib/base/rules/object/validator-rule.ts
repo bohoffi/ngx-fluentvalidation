@@ -1,8 +1,13 @@
-import { AbstractRule } from '../../../core/rules/abstract-rule';
-import { Validatable } from '../../../core/validators/validatable';
+import { PropertyRule } from '../../../core/rules/validation-rule';
+import { IValidator } from '../../../core/validators/interfaces';
 
-export class ValidatorRule<T> extends AbstractRule<T> {
-  constructor(private readonly validator: Validatable<T>) {
-    super('', value => this.validator.validate(value));
+export class ValidatorRule<TModel, TProperty> extends PropertyRule<TModel, TProperty> {
+  constructor(private readonly validator: IValidator<TProperty>) {
+    super(value => {
+      if (value === null || value === undefined) {
+        return null;
+      }
+      return this.validator.validate(value);
+    }, '');
   }
 }

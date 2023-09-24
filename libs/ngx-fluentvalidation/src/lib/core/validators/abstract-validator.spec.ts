@@ -1,120 +1,124 @@
 import { AbstractValidator } from './abstract-validator';
 
-interface Person {
-  surname: string;
-  forename: string;
-  address?: Address;
+interface TestType {
+  stringProperty: string;
+  optionalStringProperty?: string;
+  numberProperty: number;
+  optionalNumberProperty?: number;
+  objectProperty: TestSubType;
+  optionalObjectProperty?: TestSubType;
 }
 
-interface Address {
-  line1: string;
-  line2: string;
+interface TestSubType {
+  stringProperty: string;
 }
 
-class TestValidator extends AbstractValidator<Person> {}
+function createTestTypeInstance(overwrites: Partial<TestType> = {}): TestType {
+  return {
+    stringProperty: 'string',
+    numberProperty: 5,
+    objectProperty: {
+      stringProperty: 'nestedString'
+    },
+    ...overwrites
+  };
+}
+
+class TestTypeValidator extends AbstractValidator<TestType> {}
 
 describe(AbstractValidator.name, () => {
-  let testValidator: TestValidator;
+  let testTypeValidator: TestTypeValidator;
 
   beforeEach(() => {
-    testValidator = new TestValidator();
+    testTypeValidator = new TestTypeValidator();
   });
 
   it('`validate` should return `true` when no rules applied', () => {
-    const sut: Person = {
-      forename: 'Jon',
-      surname: 'Doe'
-    };
+    const sut = createTestTypeInstance();
 
-    const result = testValidator.validate(sut);
+    const result = testTypeValidator.validate(sut);
     expect(result).toBe(true);
   });
 
   it('`validate` should return `false` when a rule fails', () => {
-    const sut: Person = {
-      forename: 'Jon',
-      surname: 'Doe'
-    };
+    const sut = createTestTypeInstance({
+      stringProperty: 'Jon'
+    });
 
-    testValidator.for('forename').notEqual('Jon');
+    testTypeValidator.for('stringProperty').notEqual('Jon');
 
-    const result = testValidator.validate(sut);
+    const result = testTypeValidator.validate(sut);
     expect(result).toBe(false);
   });
 
   it('`result` should contain the errors when a rule fails', () => {
-    const sut: Person = {
-      forename: 'Jon',
-      surname: 'Doe'
-    };
+    const sut = createTestTypeInstance({
+      stringProperty: 'Jon'
+    });
 
-    testValidator.for('forename').notEqual('Jon');
+    testTypeValidator.for('stringProperty').notEqual('Jon');
 
-    testValidator.validate(sut);
-    const result = testValidator.validationResult;
+    testTypeValidator.validate(sut);
+    const result = testTypeValidator.validationResult;
     expect(result).not.toBeNull();
     expect(result?.errors).toHaveLength(1);
   });
 
   it('`withErrorMessage` should overwrite rules error message', () => {
-    const sut: Person = {
-      forename: 'Jon',
-      surname: 'Doe'
-    };
+    const sut = createTestTypeInstance({
+      stringProperty: 'Jon'
+    });
 
     const errorMessage = 'Please choose another forename';
-    testValidator.for('forename').notEqual('Jon').withMessage(errorMessage);
+    testTypeValidator.for('stringProperty').notEqual('Jon').withMessage(errorMessage);
 
-    testValidator.validate(sut);
-    const result = testValidator.validationResult;
+    testTypeValidator.validate(sut);
+    const result = testTypeValidator.validationResult;
     expect(result?.errors[0].errorMessage).toEqual(errorMessage);
   });
 
   it('`withPropertyName` should overwrite rules property name', () => {
-    const sut: Person = {
-      forename: 'Jon',
-      surname: 'Doe'
-    };
+    const sut = createTestTypeInstance({
+      stringProperty: 'Jon'
+    });
 
     const propertyName = 'firstName';
-    testValidator.for('forename').notEqual('Jon').withName(propertyName);
+    testTypeValidator.for('stringProperty').notEqual('Jon').withName(propertyName);
 
-    testValidator.validate(sut);
-    const result = testValidator.validationResult;
+    testTypeValidator.validate(sut);
+    const result = testTypeValidator.validationResult;
     expect(result?.errors[0].propertyName).toEqual(propertyName);
   });
 
   it('`when` should  run validation as long as a certain condition is fulfilled', () => {
-    const sut: Person = {
-      forename: 'Jo',
-      surname: 'Doe'
-    };
+    const sut = createTestTypeInstance({
+      stringProperty: 'Jon'
+    });
 
-    testValidator
-      .for('forename')
+    testTypeValidator
+      .for('stringProperty')
       .equal('Jon')
-      .when(model => model.forename.length === 3);
-    let result = testValidator.validate(sut);
+      .when(model => model.stringProperty.length === 3);
+    let result = testTypeValidator.validate(sut);
     expect(result).toBe(true);
-    sut.forename = 'Bob';
-    result = testValidator.validate(sut);
+    sut.stringProperty = 'Bob';
+    result = testTypeValidator.validate(sut);
     expect(result).toBe(false);
   });
 
   it('`unless` should  run validation validation until a certain condition is fulfilled', () => {
-    const sut: Person = {
-      forename: 'Bob',
-      surname: 'Doe'
-    };
+    const sut = createTestTypeInstance({
+      stringProperty: 'Jon'
+    });
 
-    testValidator
-      .for('forename')
+    testTypeValidator
+      .for('stringProperty')
       .equal('Jon')
-      .unless(model => model.forename.length === 3);
-    let result = testValidator.validate(sut);
+      .unless(model => model.stringProperty.length === 3);
+    let result = testTypeValidator.validate(sut);
     expect(result).toBe(true);
-    sut.forename = 'Jo';
-    result = testValidator.validate(sut);
+    sut.stringProperty = 'Jo';
+    result = testTypeValidator.validate(sut);
     expect(result).toBe(false);
   });
 });

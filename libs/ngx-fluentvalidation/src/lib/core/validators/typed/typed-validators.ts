@@ -1,3 +1,6 @@
+import { ApplyConditionTo } from '../../types';
+import { IValidator } from '../interfaces';
+
 export type StringProperty = string | null | undefined;
 export type NumberProperty = number | bigint | null | undefined;
 export type ObjectProperty = object | null | undefined;
@@ -34,11 +37,11 @@ export type NumberValidator<TModel, TProperty extends NumberProperty> = {
    * Validates that the value should be a positive number.
    */
   isPositive(): ExtendedValidator<TModel, TProperty>;
+  lessThan(referenceValue: number): ExtendedValidator<TModel, TProperty>;
 };
 
 export type ObjectValidator<TModel, TProperty extends ObjectProperty> = {
-  // TODO figure out
-  setValidator(): ExtendedValidator<TModel, TProperty>;
+  setValidator(validator: IValidator<TProperty>): ExtendedValidator<TModel, TProperty>;
 };
 
 export type TypeValidator<TModel, TProperty> = CommonValidator<TModel, TProperty> &
@@ -47,10 +50,8 @@ export type TypeValidator<TModel, TProperty> = CommonValidator<TModel, TProperty
   (TProperty extends ObjectProperty ? ObjectValidator<TModel, TProperty> : unknown);
 
 export type ConditionalValidator<TModel, TProperty> = TypeValidator<TModel, TProperty> & {
-  // TODO update interface
-  when(condition: (model: TModel) => boolean): TypeValidator<TModel, TProperty>;
-  // TODO update interface
-  unless(condition: (model: TModel) => boolean): TypeValidator<TModel, TProperty>;
+  when(condition: (model: TModel) => boolean, applyConditionTo?: ApplyConditionTo): TypeValidator<TModel, TProperty>;
+  unless(condition: (model: TModel) => boolean, applyConditionTo?: ApplyConditionTo): TypeValidator<TModel, TProperty>;
 };
 
 export type ExtendedValidator<TModel, TProperty> = ConditionalValidator<TModel, TProperty> & {

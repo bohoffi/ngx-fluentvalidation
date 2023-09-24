@@ -1,7 +1,7 @@
-import { AbstractRule } from '../../../core/rules/abstract-rule';
+import { PropertyRule } from '../../../core/rules/validation-rule';
 
-export class IsEmptyRule<T> extends AbstractRule<T> {
+export class IsEmptyRule<TModel, TProperty> extends PropertyRule<TModel, TProperty> {
   constructor() {
-    super('Value should be empty.', value => !value || value === '');
+    super(value => !value || value === '', 'Value should be empty.');
   }
 }

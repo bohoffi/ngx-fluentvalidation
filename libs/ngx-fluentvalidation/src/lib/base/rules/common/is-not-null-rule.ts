@@ -1,7 +1,7 @@
-import { AbstractRule } from '../../../core/rules/abstract-rule';
+import { PropertyRule } from '../../../core/rules/validation-rule';
 
-export class IsNotNullRule<T> extends AbstractRule<T> {
+export class IsNotNullRule<TModel, TProperty> extends PropertyRule<TModel, TProperty> {
   constructor() {
-    super('Value should not be null.', value => value !== null);
+    super(value => value !== null, 'Value should not be null.');
   }
 }
