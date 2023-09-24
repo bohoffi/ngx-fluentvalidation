@@ -1,11 +1,13 @@
-import { AbstractRule } from '../../../core/rules/abstract-rule';
+import { PropertyRule } from '../../../core/rules/validation-rule';
+import { hasLength } from './guards';
 
-export class HasMaxLengthRule<T extends { length: number }> extends AbstractRule<T> {
+export class HasMaxLengthRule<TModel, TProperty> extends PropertyRule<TModel, TProperty> {
   constructor(private readonly maxLength: number) {
-    super(`Value does not satisfy maximum length of '${maxLength}'.`, value => this.validateInternal(value));
-  }
-
-  private validateInternal(candidate: T): boolean {
-    return candidate.length <= this.maxLength;
+    super(value => {
+      if (!hasLength(value)) {
+        throw new TypeError('Passed non-length value to a length rule.');
+      }
+      return value.length <= this.maxLength;
+    }, `Value does not satisfy maximum length of '${maxLength}'.`);
   }
 }

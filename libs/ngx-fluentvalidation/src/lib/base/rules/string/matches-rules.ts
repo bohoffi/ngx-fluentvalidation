@@ -1,6 +1,6 @@
 import { PropertyRule } from '../../../core/rules/validation-rule';
 
-export class RegExpRule<TModel, TProperty> extends PropertyRule<TModel, TProperty> {
+export class MatchesRule<TModel, TProperty> extends PropertyRule<TModel, TProperty> {
   constructor(private readonly regexp: RegExp) {
     super(value => {
       if (typeof value !== 'string') {
