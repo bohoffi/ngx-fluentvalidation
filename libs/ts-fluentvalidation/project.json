@@ -10,9 +10,17 @@
       "options": {
         "outputPath": "dist/libs/ts-fluentvalidation",
         "main": "libs/ts-fluentvalidation/src/index.ts",
-        "tsConfig": "libs/ts-fluentvalidation/tsconfig.lib.json",
         "assets": ["libs/ts-fluentvalidation/*.md"]
-      }
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/ts-fluentvalidation/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/ts-fluentvalidation/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
     },
     "publish": {
       "command": "node tools/scripts/publish.mjs ts-fluentvalidation {args.ver} {args.tag}",

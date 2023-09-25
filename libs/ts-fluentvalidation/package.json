@@ -1,6 +1,27 @@
 {
   "name": "ts-fluentvalidation",
   "version": "0.0.1",
+  "description": "A TypeScript port of .NETs FluentValidation library.",
+  "keywords": [
+    "typescript",
+    "fluent",
+    "validation",
+    "fluentvalidation"
+  ],
+  "author": {
+    "name": "bohoffi",
+    "email": "bo.hoffi@gmail.com",
+    "url": "https://bohoffi.github.io/"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bohoffi/ngx-doc-gen.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bohoffi/ngx-fluentvalidation/issues?q=is%3Aissue+is%3Aopen+label%3Ats-fluentvalidation"
+  },
+  "homepage": "",
   "dependencies": {
     "tslib": "^2.3.0"
   },
