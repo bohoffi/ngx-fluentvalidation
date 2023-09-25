@@ -22,9 +22,6 @@
     "url": "https://github.com/bohoffi/ngx-fluentvalidation/issues?q=is%3Aissue+is%3Aopen+label%3Ats-fluentvalidation"
   },
   "homepage": "",
-  "dependencies": {
-    "tslib": "^2.3.0"
-  },
   "type": "commonjs",
   "main": "./src/index.js",
   "typings": "./src/index.d.ts"
