@@ -1,5 +1,5 @@
 {
-  "name": "ngx-fluentvalidation",
+  "name": "ngx-fluentvalidation-workspace",
   "license": "Apache-2.0",
   "scripts": {
     "prepare": "husky install"
