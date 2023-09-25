@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "ngx-fluentvalidation": ["libs/ngx-fluentvalidation/src/index.ts"]
+      "ngx-fluentvalidation": ["libs/ngx-fluentvalidation/src/index.ts"],
+      "ts-fluentvalidation": ["libs/ts-fluentvalidation/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
