@@ -10,10 +10,15 @@ describe('Rules', () => {
 
   describe('common rules', () => {
     it('equal', () => {
-      const sut = createTestTypeInstance();
+      const sut = createTestTypeInstance({
+        stringPropertyTwo: 'Jon',
+        numberPropertyTwo: 6
+      });
 
       testTypeValidator.for('stringProperty').equal('Jon');
+      testTypeValidator.for('stringProperty').equal(model => model.stringPropertyTwo);
       testTypeValidator.for('numberProperty').equal(6);
+      testTypeValidator.for('numberProperty').equal(model => model.numberPropertyTwo);
       testTypeValidator.for('booleanProperty').equal(false);
 
       const isValid = testTypeValidator.validate(sut);
@@ -53,7 +58,9 @@ describe('Rules', () => {
       const sut = createTestTypeInstance();
 
       testTypeValidator.for('stringProperty').notEqual(sut.stringProperty);
+      testTypeValidator.for('stringProperty').notEqual(model => model.stringPropertyTwo);
       testTypeValidator.for('numberProperty').notEqual(sut.numberProperty);
+      testTypeValidator.for('numberProperty').notEqual(model => model.numberPropertyTwo);
       testTypeValidator.for('booleanProperty').notEqual(sut.booleanProperty);
 
       const isValid = testTypeValidator.validate(sut);
@@ -169,6 +176,7 @@ describe('Rules', () => {
       const sut = createTestTypeInstance();
 
       testTypeValidator.for('numberProperty').lessThan(5);
+      testTypeValidator.for('numberProperty').lessThan(model => model.numberPropertyTwo);
 
       const isValid = testTypeValidator.validate(sut);
       expect(isValid).toBe(false);
@@ -178,9 +186,12 @@ describe('Rules', () => {
     });
 
     it('lessThanOrEqualTo', () => {
-      const sut = createTestTypeInstance();
+      const sut = createTestTypeInstance({
+        numberPropertyTwo: 4
+      });
 
       testTypeValidator.for('numberProperty').lessThanOrEqualTo(4);
+      testTypeValidator.for('numberProperty').lessThanOrEqualTo(model => model.numberPropertyTwo);
 
       const isValid = testTypeValidator.validate(sut);
       expect(isValid).toBe(false);
@@ -190,9 +201,12 @@ describe('Rules', () => {
     });
 
     it('greaterThan', () => {
-      const sut = createTestTypeInstance();
+      const sut = createTestTypeInstance({
+        numberPropertyTwo: 5
+      });
 
       testTypeValidator.for('numberProperty').greaterThan(5);
+      testTypeValidator.for('numberProperty').greaterThan(model => model.numberPropertyTwo);
 
       const isValid = testTypeValidator.validate(sut);
       expect(isValid).toBe(false);
@@ -202,9 +216,12 @@ describe('Rules', () => {
     });
 
     it('greaterThanOrEqualTo', () => {
-      const sut = createTestTypeInstance();
+      const sut = createTestTypeInstance({
+        numberPropertyTwo: 6
+      });
 
       testTypeValidator.for('numberProperty').greaterThan(6);
+      testTypeValidator.for('numberProperty').greaterThan(model => model.numberPropertyTwo);
 
       const isValid = testTypeValidator.validate(sut);
       expect(isValid).toBe(false);

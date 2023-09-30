@@ -1,4 +1,4 @@
-import { isLengthProperty } from './guards';
+import { isLengthProperty } from '../guards';
 import { PropertyRule } from '../property-rule';
 
 export class IsEmptyRule<TModel, TProperty> extends PropertyRule<TModel, TProperty> {

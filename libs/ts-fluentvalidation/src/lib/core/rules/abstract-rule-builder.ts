@@ -142,11 +142,11 @@ export abstract class AbstractRuleBuilder<TModel, TProperty> {
     this.addRule(new IsNotNullRule());
     return this.getRulesWithExtensionsAndConditions();
   };
-  public equal = (referenceValue: TProperty) => {
-    this.addRule(new EqualsRule<TModel, TProperty>(referenceValue));
+  public equal = (referenceValue: TProperty | ((model: TModel) => TProperty | null | undefined)) => {
+    this.addRule(new EqualsRule(referenceValue));
     return this.getRulesWithExtensionsAndConditions();
   };
-  public notEqual = (referenceValue: TProperty) => {
+  public notEqual = (referenceValue: TProperty | ((model: TModel) => TProperty | null | undefined)) => {
     this.addRule(new NotEqualsRule(referenceValue));
     return this.getRulesWithExtensionsAndConditions();
   };
@@ -174,19 +174,19 @@ export abstract class AbstractRuleBuilder<TModel, TProperty> {
   };
 
   // number rules
-  public lessThan = (referenceValue: number) => {
+  public lessThan = (referenceValue: number | ((model: TModel) => TProperty | null | undefined)) => {
     this.addRule(new LessThanRule(referenceValue));
     return this.getRulesWithExtensionsAndConditions();
   };
-  lessThanOrEqualTo = (referenceValue: number) => {
+  lessThanOrEqualTo = (referenceValue: number | ((model: TModel) => TProperty | null | undefined)) => {
     this.addRule(new LessThanOrEqualToRule(referenceValue));
     return this.getRulesWithExtensionsAndConditions();
   };
-  public greaterThan = (referenceValue: number) => {
+  public greaterThan = (referenceValue: number | ((model: TModel) => TProperty | null | undefined)) => {
     this.addRule(new GreaterThanRule(referenceValue));
     return this.getRulesWithExtensionsAndConditions();
   };
-  greaterThanOrEqualTo = (referenceValue: number) => {
+  public greaterThanOrEqualTo = (referenceValue: number | ((model: TModel) => TProperty | null | undefined)) => {
     this.addRule(new GreaterThanOrEqualToRule(referenceValue));
     return this.getRulesWithExtensionsAndConditions();
   };

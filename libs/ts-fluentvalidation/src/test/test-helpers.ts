@@ -4,8 +4,10 @@ import { ModelValidator } from '../lib/core/validators/model-validator';
 
 export interface TestType {
   stringProperty: string;
+  stringPropertyTwo: string;
   optionalStringProperty?: string;
   numberProperty: number;
+  numberPropertyTwo: number;
   booleanProperty: boolean;
   optionalBooleanProperty?: boolean;
   optionalNumberProperty?: number;
@@ -22,7 +24,9 @@ export interface TestSubType {
 export function createTestTypeInstance(overwrites: Partial<TestType> = {}): TestType {
   return {
     stringProperty: 'string',
+    stringPropertyTwo: 'string',
     numberProperty: 5,
+    numberPropertyTwo: 5,
     booleanProperty: true,
     objectProperty: {
       stringProperty: 'nestedString'

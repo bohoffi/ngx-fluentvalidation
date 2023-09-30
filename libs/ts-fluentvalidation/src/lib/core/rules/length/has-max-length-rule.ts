@@ -1,5 +1,5 @@
 import { PropertyRule } from '../property-rule';
-import { isLengthProperty } from './guards';
+import { isLengthProperty } from '../guards';
 
 export class HasMaxLengthRule<TModel, TProperty> extends PropertyRule<TModel, TProperty> {
   constructor(private readonly maxLength: number) {
