@@ -25,14 +25,14 @@ type CommonRuleBuilder<TModel, TProperty> = {
    * Validation will fail if the value is not equal to the given reference value.
    * @param referenceValue The value to compare against
    */
-  equal(referenceValue: TProperty): ExtendedRuleBuilder<TModel, TProperty>;
+  equal(referenceValue: TProperty | ((model: TModel) => TProperty)): ExtendedRuleBuilder<TModel, TProperty>;
   /**
    * Defines a `not equal` validation.
    *
    * Validation will fail if the value is equal to the given reference value.
    * @param referenceValue The value to compare against
    */
-  notEqual(referenceValue: TProperty): ExtendedRuleBuilder<TModel, TProperty>;
+  notEqual(referenceValue: TProperty | ((model: TModel) => TProperty)): ExtendedRuleBuilder<TModel, TProperty>;
   /**
    * Defines a predicate validation.
    *
@@ -65,28 +65,28 @@ type NumberRuleBuilder<TModel, TProperty extends NumberProperty> = {
    * Validation will fail if the value is equal to or greater than the given reference value.
    * @param referenceValue The value to compare against
    */
-  lessThan(referenceValue: number): ExtendedRuleBuilder<TModel, TProperty>;
+  lessThan(referenceValue: number | ((model: TModel) => TProperty)): ExtendedRuleBuilder<TModel, TProperty>;
   /**
    * Defines a `less than or equal to` validation.
    *
    * Validation will fail if the value is greater than the given reference value.
    * @param referenceValue The value to compare against
    */
-  lessThanOrEqualTo(referenceValue: number): ExtendedRuleBuilder<TModel, TProperty>;
+  lessThanOrEqualTo(referenceValue: number | ((model: TModel) => TProperty)): ExtendedRuleBuilder<TModel, TProperty>;
   /**
    * Defines a `greater than` validation.
    *
    * Validation will fail if the value is equal to or less than the given reference value.
    * @param referenceValue The value to compare against
    */
-  greaterThan(referenceValue: number): ExtendedRuleBuilder<TModel, TProperty>;
+  greaterThan(referenceValue: number | ((model: TModel) => TProperty)): ExtendedRuleBuilder<TModel, TProperty>;
   /**
    * Defines a `greater than or equals` validation.
    *
    * Validation will fail if the value is less than the given reference value.
    * @param referenceValue The value to compare against
    */
-  greaterThanOrEqualTo(referenceValue: number): ExtendedRuleBuilder<TModel, TProperty>;
+  greaterThanOrEqualTo(referenceValue: number | ((model: TModel) => TProperty)): ExtendedRuleBuilder<TModel, TProperty>;
   /**
    * Defines a `is positive` validation.
    *

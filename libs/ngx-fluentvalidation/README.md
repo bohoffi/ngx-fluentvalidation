@@ -16,12 +16,12 @@
   - [ ] [Cascading of rules](https://docs.fluentvalidation.net/en/latest/cascade.html) (break on first fail)
 - Rules
   - Cross-property comparison rules (add possibility to compare against another property value)
-    - [ ] notEqual
-    - [ ] equal
-    - [ ] lessThan
-    - [ ] lessThanOrEqualTo
-    - [ ] greaterThan
-    - [ ] greaterThanOrEqualTo
+    - [x] notEqual
+    - [x] equal
+    - [x] lessThan
+    - [x] lessThanOrEqualTo
+    - [x] greaterThan
+    - [x] greaterThanOrEqualTo
   - [x] Expand support for `empty` validation (#10)
 
 ## Extension - Phase II

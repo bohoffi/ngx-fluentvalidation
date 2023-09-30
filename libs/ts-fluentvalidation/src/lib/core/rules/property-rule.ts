@@ -1,5 +1,6 @@
 import { ValidationFailure } from '../result/validation-failure';
 import { ExtendedRule } from './extended-rule';
+import { isCallable } from './guards';
 
 export abstract class PropertyRule<TModel, TProperty> extends ExtendedRule<TModel> {
   private failure: ValidationFailure | null = null;
@@ -10,7 +11,7 @@ export abstract class PropertyRule<TModel, TProperty> extends ExtendedRule<TMode
 
   constructor(
     private readonly validation: (value: TProperty | null | undefined, model: TModel) => boolean | null,
-    private readonly errorMessage: string
+    private readonly errorMessageOrModel: string | ((model: TModel) => string)
   ) {
     super();
   }
@@ -31,7 +32,16 @@ export abstract class PropertyRule<TModel, TProperty> extends ExtendedRule<TMode
     const validationResult = this.validation(value, model);
     this.failure = validationResult
       ? null
-      : { attemptedValue: value, errorMessage: this.customErrorMessage ?? this.errorMessage, propertyName: this.propertyName };
+      : { attemptedValue: value, errorMessage: this.getErrorMessage(model), propertyName: this.propertyName };
     return validationResult;
+  }
+
+  private getErrorMessage(model: TModel): string {
+    if (this.customErrorMessage) {
+      return this.customErrorMessage;
+    } else if (isCallable(this.errorMessageOrModel)) {
+      return this.errorMessageOrModel(model);
+    }
+    return this.errorMessageOrModel;
   }
 }
