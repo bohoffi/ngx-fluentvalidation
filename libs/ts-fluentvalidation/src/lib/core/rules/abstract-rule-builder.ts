@@ -19,9 +19,9 @@ import { LessThanRule } from './number/less-than-rule';
 import { ValidatorRule } from './object/validator-rule';
 import { PropertyRule } from './property-rule';
 import { CreditCardRule } from './string/credit-card-rule';
-import { IsEmptyRule } from './string/is-empty-rule';
+import { IsEmptyRule } from './length/is-empty-rule';
 import { MatchesRule } from './string/matches-rules';
-import { NotEmptyRule } from './string/not-empty-rule';
+import { NotEmptyRule } from './length/not-empty-rule';
 
 export abstract class AbstractRuleBuilder<TModel, TProperty> {
   private lastRule: PropertyRule<TModel, TProperty> | null = null;
@@ -63,8 +63,6 @@ export abstract class AbstractRuleBuilder<TModel, TProperty> {
   private getStringRules() {
     return {
       creditCard: this.creditCard,
-      empty: this.empty,
-      notEmpty: this.notEmpty,
       matches: this.matches
     };
   }
@@ -92,7 +90,9 @@ export abstract class AbstractRuleBuilder<TModel, TProperty> {
     return {
       length: this.length,
       maxLength: this.maxLength,
-      minLength: this.minLength
+      minLength: this.minLength,
+      empty: this.empty,
+      notEmpty: this.notEmpty
     };
   }
 

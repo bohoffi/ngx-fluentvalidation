@@ -1,10 +1,10 @@
 import { ApplyConditionTo } from '../types';
 import { IValidator } from '../validators/interfaces';
 
-type StringProperty = string | null | undefined;
-type NumberProperty = number | bigint | null | undefined;
-type ObjectProperty = object | null | undefined;
-type LengthProperty = { length: number };
+export type StringProperty = string | null | undefined;
+export type NumberProperty = number | bigint | null | undefined;
+export type ObjectProperty = object | null | undefined;
+export type LengthProperty = { length: number } | null | undefined;
 
 type CommonRuleBuilder<TModel, TProperty> = {
   /**
@@ -49,18 +49,6 @@ type StringRuleBuilder<TModel, TProperty extends StringProperty> = {
    * Validation will fail if the value is not a valid credit card number.
    */
   creditCard(): ExtendedRuleBuilder<TModel, TProperty>;
-  /**
-   * Defines an `empty` validation.
-   *
-   * Validation will fail if the value is not an empty string.
-   */
-  empty(): ExtendedRuleBuilder<TModel, TProperty>;
-  /**
-   * Defines a `not empty` validation.
-   *
-   * Validation will fail if the value is an empty string.
-   */
-  notEmpty(): ExtendedRuleBuilder<TModel, TProperty>;
   /**
    * Defines a regular expression validation.
    *
@@ -159,6 +147,18 @@ type LengthRuleBuilder<TModel, TProperty extends LengthProperty> = {
    * @param maxLength The minimum length to check against
    */
   minLength(minLength: number): ExtendedRuleBuilder<TModel, TProperty>;
+  /**
+   * Defines an `empty` validation.
+   *
+   * Validation will fail if the values length is not equal to 0.
+   */
+  empty(): ExtendedRuleBuilder<TModel, TProperty>;
+  /**
+   * Defines a `not empty` validation.
+   *
+   * Validation will fail if the values length is equal to 0.
+   */
+  notEmpty(): ExtendedRuleBuilder<TModel, TProperty>;
 };
 
 export type TypeRuleBuilder<TModel, TProperty> = CommonRuleBuilder<TModel, TProperty> &

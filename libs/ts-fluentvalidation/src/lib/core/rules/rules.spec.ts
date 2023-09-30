@@ -132,6 +132,36 @@ describe('Rules', () => {
       expect(validationResult).not.toBeNull();
       expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty', 'arrayProperty'])).toBe(true);
     });
+
+    it('empty', () => {
+      const sut = createTestTypeInstance({
+        arrayProperty: [1]
+      });
+
+      testTypeValidator.for('stringProperty').empty();
+      testTypeValidator.for('arrayProperty').empty();
+
+      const isValid = testTypeValidator.validate(sut);
+      expect(isValid).toBe(false);
+      const validationResult = testTypeValidator.validationResult;
+      expect(validationResult).not.toBeNull();
+      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty', 'arrayProperty'])).toBe(true);
+    });
+
+    it('notEmpty', () => {
+      const sut = createTestTypeInstance({
+        stringProperty: ''
+      });
+
+      testTypeValidator.for('stringProperty').notEmpty();
+      testTypeValidator.for('arrayProperty').notEmpty();
+
+      const isValid = testTypeValidator.validate(sut);
+      expect(isValid).toBe(false);
+      const validationResult = testTypeValidator.validationResult;
+      expect(validationResult).not.toBeNull();
+      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty', 'arrayProperty'])).toBe(true);
+    });
   });
 
   describe('numeric rules', () => {
@@ -258,32 +288,6 @@ describe('Rules', () => {
       });
 
       testTypeValidator.for('stringProperty').creditCard();
-
-      const isValid = testTypeValidator.validate(sut);
-      expect(isValid).toBe(false);
-      const validationResult = testTypeValidator.validationResult;
-      expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty'])).toBe(true);
-    });
-
-    it('empty', () => {
-      const sut = createTestTypeInstance();
-
-      testTypeValidator.for('stringProperty').empty();
-
-      const isValid = testTypeValidator.validate(sut);
-      expect(isValid).toBe(false);
-      const validationResult = testTypeValidator.validationResult;
-      expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty'])).toBe(true);
-    });
-
-    it('notEmpty', () => {
-      const sut = createTestTypeInstance({
-        stringProperty: ''
-      });
-
-      testTypeValidator.for('stringProperty').notEmpty();
 
       const isValid = testTypeValidator.validate(sut);
       expect(isValid).toBe(false);
