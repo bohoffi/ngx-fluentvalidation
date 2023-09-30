@@ -7,9 +7,7 @@
 
 ## Check and Fix
 
-- Restructure code in new TS lib project `ts-fluentvalidation`
-- Rules
-  - [ ] `setValidator` should be apllicable to all property types - not just object types
+- [x] Restructure code in new TS lib project `ts-fluentvalidation`
 
 ## Extension - Phase I
 
@@ -24,7 +22,7 @@
     - [ ] lessThanOrEqualTo
     - [ ] greaterThan
     - [ ] greaterThanOrEqualTo
-  - add `empty` rule `length` and `size` properties
+  - [x] Expand support for `empty` validation (#10)
 
 ## Extension - Phase II
 
@@ -46,3 +44,8 @@
 - Rules
   - Conditions
     - [ ] [Otherwise](https://docs.fluentvalidation.net/en/latest/conditions.html)
+
+## Further updates
+
+- Rules
+  - [ ] `setValidator` should be apllicable to all property types - not just object types
