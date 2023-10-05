@@ -22,13 +22,34 @@ import { CreditCardRule } from './string/credit-card-rule';
 import { IsEmptyRule } from './length/is-empty-rule';
 import { MatchesRule } from './string/matches-rules';
 import { NotEmptyRule } from './length/not-empty-rule';
+import {
+  CommonRuleBuilder,
+  ConditionalRuleBuilder,
+  ExtendedRuleBuilder,
+  LengthProperty,
+  LengthRuleBuilder,
+  NumberProperty,
+  NumberRuleBuilder,
+  ObjectProperty,
+  ObjectRuleBuilder,
+  StringProperty,
+  StringRuleBuilder
+} from './rule-builders';
+
+type RuleBuilderContract<TRuleBuilder> = {
+  [K in keyof TRuleBuilder]: unknown;
+};
 
 export abstract class AbstractRuleBuilder<TModel, TProperty> {
   private lastRule: PropertyRule<TModel, TProperty> | null = null;
 
   constructor(private readonly validator: IPropertyValidator<TModel, TProperty>) {}
 
-  protected getTypeRules() {
+  protected getTypeRules(): ReturnType<AbstractRuleBuilder<TModel, TProperty>['getCommonRules']> &
+    ReturnType<AbstractRuleBuilder<TModel, TProperty>['getStringRules']> &
+    ReturnType<AbstractRuleBuilder<TModel, TProperty>['getNumberRules']> &
+    ReturnType<AbstractRuleBuilder<TModel, TProperty>['getObjectRules']> &
+    ReturnType<AbstractRuleBuilder<TModel, TProperty>['getLengthRules']> {
     return {
       ...this.getCommonRules(),
       ...this.getStringRules(),
@@ -40,17 +61,32 @@ export abstract class AbstractRuleBuilder<TModel, TProperty> {
 
   public abstract getAllRules(): object;
 
-  private getRulesWithExtensionsAndConditions() {
+  private getRulesWithExtensionsAndConditions(): RuleBuilderContract<
+    Pick<ExtendedRuleBuilder<TModel, TProperty>, 'withMessage' | 'withName' | 'when' | 'unless'>
+  > &
+    unknown {
     return {
       ...this.getAllRules(),
-      withMessage: this.withMessage,
-      withName: this.withName,
+      ...this.getExtensions(),
+      ...this.getConditions()
+    };
+  }
+
+  private getConditions(): RuleBuilderContract<Pick<ConditionalRuleBuilder<TModel, TProperty>, 'when' | 'unless'>> {
+    return {
       when: this.when,
       unless: this.unless
     };
   }
 
-  private getCommonRules() {
+  private getExtensions(): RuleBuilderContract<Pick<ExtendedRuleBuilder<TModel, TProperty>, 'withMessage' | 'withName'>> {
+    return {
+      withMessage: this.withMessage,
+      withName: this.withName
+    };
+  }
+
+  private getCommonRules(): RuleBuilderContract<CommonRuleBuilder<TModel, TProperty>> {
     return {
       isNull: this.isNull,
       notNull: this.notNull,
@@ -60,14 +96,14 @@ export abstract class AbstractRuleBuilder<TModel, TProperty> {
     };
   }
 
-  private getStringRules() {
+  private getStringRules(): RuleBuilderContract<StringRuleBuilder<TModel, StringProperty>> {
     return {
       creditCard: this.creditCard,
       matches: this.matches
     };
   }
 
-  private getNumberRules() {
+  private getNumberRules(): RuleBuilderContract<NumberRuleBuilder<TModel, NumberProperty>> {
     return {
       lessThan: this.lessThan,
       lessThanOrEqualTo: this.lessThanOrEqualTo,
@@ -80,13 +116,13 @@ export abstract class AbstractRuleBuilder<TModel, TProperty> {
     };
   }
 
-  private getObjectRules() {
+  private getObjectRules(): RuleBuilderContract<ObjectRuleBuilder<TModel, ObjectProperty>> {
     return {
       setValidator: this.setValidator
     };
   }
 
-  private getLengthRules() {
+  private getLengthRules(): RuleBuilderContract<LengthRuleBuilder<TModel, LengthProperty>> {
     return {
       length: this.length,
       maxLength: this.maxLength,

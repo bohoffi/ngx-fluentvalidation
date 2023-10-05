@@ -6,7 +6,7 @@ export type NumberProperty = number | bigint | null | undefined;
 export type ObjectProperty = object | null | undefined;
 export type LengthProperty = { length: number } | null | undefined;
 
-type CommonRuleBuilder<TModel, TProperty> = {
+export type CommonRuleBuilder<TModel, TProperty> = {
   /**
    * Defines a `null` validation.
    *
@@ -42,7 +42,7 @@ type CommonRuleBuilder<TModel, TProperty> = {
   must(predicate: (value: TProperty | null | undefined, model: TModel) => boolean): ExtendedRuleBuilder<TModel, TProperty>;
 };
 
-type StringRuleBuilder<TModel, TProperty extends StringProperty> = {
+export type StringRuleBuilder<TModel, TProperty extends StringProperty> = {
   /**
    * Defines a credit card number validation. This validation uses the Luhn algorythm.
    *
@@ -58,7 +58,7 @@ type StringRuleBuilder<TModel, TProperty extends StringProperty> = {
   matches(regExp: RegExp): ExtendedRuleBuilder<TModel, TProperty>;
 };
 
-type NumberRuleBuilder<TModel, TProperty extends NumberProperty> = {
+export type NumberRuleBuilder<TModel, TProperty extends NumberProperty> = {
   /**
    * Defines a `less than` validation.
    *
@@ -115,7 +115,7 @@ type NumberRuleBuilder<TModel, TProperty extends NumberProperty> = {
   inclusiveBetween(options: { min: number; max: number }): ExtendedRuleBuilder<TModel, TProperty>;
 };
 
-type ObjectRuleBuilder<TModel, TProperty extends ObjectProperty> = {
+export type ObjectRuleBuilder<TModel, TProperty extends ObjectProperty> = {
   /**
    * Defines a validation against a specific validator.
    *
@@ -125,7 +125,7 @@ type ObjectRuleBuilder<TModel, TProperty extends ObjectProperty> = {
   setValidator(validator: IValidator<TProperty>): ExtendedRuleBuilder<TModel, TProperty>;
 };
 
-type LengthRuleBuilder<TModel, TProperty extends LengthProperty> = {
+export type LengthRuleBuilder<TModel, TProperty extends LengthProperty> = {
   /**
    * Defines a `min/max length` validation.
    *
@@ -167,7 +167,7 @@ export type TypeRuleBuilder<TModel, TProperty> = CommonRuleBuilder<TModel, TProp
   (TProperty extends ObjectProperty ? ObjectRuleBuilder<TModel, TProperty> : unknown) &
   (TProperty extends LengthProperty ? LengthRuleBuilder<TModel, TProperty> : unknown);
 
-type ConditionalRuleBuilder<TModel, TProperty> = TypeRuleBuilder<TModel, TProperty> & {
+export type ConditionalRuleBuilder<TModel, TProperty> = TypeRuleBuilder<TModel, TProperty> & {
   /**
    * Defines a condition when a validation rule should execute. Rule will not get executed if the condition evaluates to `false`.
    * @param condition Condition to evaluate
@@ -182,7 +182,7 @@ type ConditionalRuleBuilder<TModel, TProperty> = TypeRuleBuilder<TModel, TProper
   unless(condition: (model: TModel) => boolean, applyConditionTo?: ApplyConditionTo): TypeRuleBuilder<TModel, TProperty>;
 };
 
-type ExtendedRuleBuilder<TModel, TProperty> = ConditionalRuleBuilder<TModel, TProperty> & {
+export type ExtendedRuleBuilder<TModel, TProperty> = ConditionalRuleBuilder<TModel, TProperty> & {
   /**
    * Overrides the default error message of a validation rule.
    * @param message Custom error message to use
