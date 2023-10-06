@@ -3,7 +3,7 @@ import { ValidationResult } from './validation-result';
 
 describe(ValidationResult.name, () => {
   it('should return `isValid === true` when failure list is empty', () => {
-    const validationResult = new ValidationResult([]);
+    const validationResult = ValidationResult.Initial();
     expect(validationResult.isValid).toBe(true);
     expect(validationResult.errors).toHaveLength(0);
   });
@@ -11,7 +11,7 @@ describe(ValidationResult.name, () => {
   it('should return `isValid === false` when failure list is not empty', () => {
     const errorMessages = ['`foo` is not valid', `Value does not satisfy minimum length of '5'`];
 
-    const validationResult = new ValidationResult(
+    const validationResult = ValidationResult.withFailures(
       errorMessages.map<ValidationFailure>(errorMessage => ({
         attemptedValue: 'foo',
         errorMessage
@@ -24,7 +24,7 @@ describe(ValidationResult.name, () => {
   it('should join error messages by given separator', () => {
     const errorMessages = ['`foo` is not valid', `Value does not satisfy minimum length of '5'`];
 
-    const validationResult = new ValidationResult(
+    const validationResult = ValidationResult.withFailures(
       errorMessages.map<ValidationFailure>(errorMessage => ({
         attemptedValue: 'foo',
         errorMessage
@@ -38,7 +38,7 @@ describe(ValidationResult.name, () => {
   });
 
   it('should create a map with messages grouped by property name', () => {
-    const validationResult = new ValidationResult([
+    const validationResult = ValidationResult.withFailures([
       {
         attemptedValue: 'foo',
         errorMessage: 'A not valid',

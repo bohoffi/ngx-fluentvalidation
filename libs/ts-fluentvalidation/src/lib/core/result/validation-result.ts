@@ -20,7 +20,21 @@ export class ValidationResult {
     return this.failures.slice();
   }
 
-  constructor(failures: ValidationFailure[]) {
+  /**
+   * Creates a valid result object.
+   */
+  static Initial(): ValidationResult {
+    return new ValidationResult();
+  }
+
+  /**
+   * Creates a result object by passing a failure array.
+   */
+  static withFailures(failures: ValidationFailure[]): ValidationResult {
+    return new ValidationResult(failures);
+  }
+
+  private constructor(failures: ValidationFailure[] = []) {
     this.failures = this.failures.concat(failures);
   }
 

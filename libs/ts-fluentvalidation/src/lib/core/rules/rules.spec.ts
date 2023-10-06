@@ -25,7 +25,7 @@ describe('Rules', () => {
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty', 'numberProperty', 'booleanProperty'])).toBe(true);
+      expect(hasErrorsFor(validationResult.errors, ['stringProperty', 'numberProperty', 'booleanProperty'])).toBe(true);
     });
 
     it('notNull', () => {
@@ -37,7 +37,7 @@ describe('Rules', () => {
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['nullableString'])).toBe(true);
+      expect(hasErrorsFor(validationResult.errors, ['nullableString'])).toBe(true);
     });
 
     it('isNull', () => {
@@ -51,7 +51,7 @@ describe('Rules', () => {
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['nullableString'])).toBe(true);
+      expect(hasErrorsFor(validationResult.errors, ['nullableString'])).toBe(true);
     });
 
     it('notEqual', () => {
@@ -67,7 +67,7 @@ describe('Rules', () => {
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty', 'numberProperty', 'booleanProperty'])).toBe(true);
+      expect(hasErrorsFor(validationResult.errors, ['stringProperty', 'numberProperty', 'booleanProperty'])).toBe(true);
     });
 
     describe('must', () => {
@@ -80,7 +80,7 @@ describe('Rules', () => {
         expect(isValid).toBe(false);
         const validationResult = testTypeValidator.validationResult;
         expect(validationResult).not.toBeNull();
-        expect(hasErrorsFor(validationResult?.errors || [], ['numberProperty'])).toBe(true);
+        expect(hasErrorsFor(validationResult.errors, ['numberProperty'])).toBe(true);
       });
       it('property and model predicate', () => {
         const sut = createTestTypeInstance();
@@ -91,7 +91,7 @@ describe('Rules', () => {
         expect(isValid).toBe(false);
         const validationResult = testTypeValidator.validationResult;
         expect(validationResult).not.toBeNull();
-        expect(hasErrorsFor(validationResult?.errors || [], ['numberProperty'])).toBe(true);
+        expect(hasErrorsFor(validationResult.errors, ['numberProperty'])).toBe(true);
       });
     });
   });
@@ -107,7 +107,7 @@ describe('Rules', () => {
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty', 'numberArray'])).toBe(true);
+      expect(hasErrorsFor(validationResult.errors, ['stringProperty', 'numberArray'])).toBe(true);
     });
 
     it('maxLength', () => {
@@ -122,7 +122,7 @@ describe('Rules', () => {
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty', 'numberArray'])).toBe(true);
+      expect(hasErrorsFor(validationResult.errors, ['stringProperty', 'numberArray'])).toBe(true);
     });
 
     it('minLength', () => {
@@ -137,7 +137,7 @@ describe('Rules', () => {
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty', 'numberArray'])).toBe(true);
+      expect(hasErrorsFor(validationResult.errors, ['stringProperty', 'numberArray'])).toBe(true);
     });
 
     it('empty', () => {
@@ -152,7 +152,7 @@ describe('Rules', () => {
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty', 'numberArray'])).toBe(true);
+      expect(hasErrorsFor(validationResult.errors, ['stringProperty', 'numberArray'])).toBe(true);
     });
 
     it('notEmpty', () => {
@@ -167,7 +167,7 @@ describe('Rules', () => {
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty', 'numberArray'])).toBe(true);
+      expect(hasErrorsFor(validationResult.errors, ['stringProperty', 'numberArray'])).toBe(true);
     });
   });
 
@@ -182,7 +182,7 @@ describe('Rules', () => {
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['numberProperty'])).toBe(true);
+      expect(hasErrorsFor(validationResult.errors, ['numberProperty'])).toBe(true);
     });
 
     it('lessThanOrEqualTo', () => {
@@ -197,7 +197,7 @@ describe('Rules', () => {
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['numberProperty'])).toBe(true);
+      expect(hasErrorsFor(validationResult.errors, ['numberProperty'])).toBe(true);
     });
 
     it('greaterThan', () => {
@@ -212,7 +212,7 @@ describe('Rules', () => {
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['numberProperty'])).toBe(true);
+      expect(hasErrorsFor(validationResult.errors, ['numberProperty'])).toBe(true);
     });
 
     it('greaterThanOrEqualTo', () => {
@@ -227,7 +227,7 @@ describe('Rules', () => {
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['numberProperty'])).toBe(true);
+      expect(hasErrorsFor(validationResult.errors, ['numberProperty'])).toBe(true);
     });
 
     it('isPositive', () => {
@@ -239,7 +239,7 @@ describe('Rules', () => {
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['numberProperty'])).toBe(true);
+      expect(hasErrorsFor(validationResult.errors, ['numberProperty'])).toBe(true);
     });
 
     it('isNegative', () => {
@@ -251,7 +251,7 @@ describe('Rules', () => {
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['numberProperty'])).toBe(true);
+      expect(hasErrorsFor(validationResult.errors, ['numberProperty'])).toBe(true);
     });
 
     it('exclusiveBetween', () => {
@@ -263,7 +263,7 @@ describe('Rules', () => {
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['numberProperty'])).toBe(true);
+      expect(hasErrorsFor(validationResult.errors, ['numberProperty'])).toBe(true);
     });
 
     it('inclusiveBetween', () => {
@@ -275,7 +275,7 @@ describe('Rules', () => {
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['numberProperty'])).toBe(true);
+      expect(hasErrorsFor(validationResult.errors, ['numberProperty'])).toBe(true);
     });
   });
 
@@ -294,7 +294,7 @@ describe('Rules', () => {
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['objectProperty'])).toBe(true);
+      expect(hasErrorsFor(validationResult.errors, ['objectProperty'])).toBe(true);
     });
   });
 
@@ -310,7 +310,7 @@ describe('Rules', () => {
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty'])).toBe(true);
+      expect(hasErrorsFor(validationResult.errors, ['stringProperty'])).toBe(true);
     });
 
     it('matches', () => {
@@ -324,7 +324,7 @@ describe('Rules', () => {
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty'])).toBe(true);
+      expect(hasErrorsFor(validationResult.errors, ['stringProperty'])).toBe(true);
     });
   });
 
@@ -340,8 +340,8 @@ describe('Rules', () => {
 
         testTypeValidator.validate(sut);
         const result = testTypeValidator.validationResult;
-        expect(result?.errors.filter(err => err.propertyName === 'stringProperty')).toHaveLength(2);
-        expect(result?.errors.filter(err => err.propertyName === 'stringPropertyTwo')).toHaveLength(1);
+        expect(result.errors.filter(err => err.propertyName === 'stringProperty')).toHaveLength(2);
+        expect(result.errors.filter(err => err.propertyName === 'stringPropertyTwo')).toHaveLength(1);
       });
 
       it('validator.ruleLevelCascadeMode', () => {
@@ -355,8 +355,8 @@ describe('Rules', () => {
 
         testTypeValidator.validate(sut);
         const result = testTypeValidator.validationResult;
-        expect(result?.errors.filter(err => err.propertyName === 'stringProperty')).toHaveLength(1);
-        expect(result?.errors.filter(err => err.propertyName === 'stringPropertyTwo')).toHaveLength(1);
+        expect(result.errors.filter(err => err.propertyName === 'stringProperty')).toHaveLength(1);
+        expect(result.errors.filter(err => err.propertyName === 'stringPropertyTwo')).toHaveLength(1);
       });
     });
   });
@@ -372,7 +372,7 @@ describe('Rules', () => {
 
       testTypeValidator.validate(sut);
       const result = testTypeValidator.validationResult;
-      expect(result?.errors[0].errorMessage).toEqual(errorMessage);
+      expect(result.errors[0].errorMessage).toEqual(errorMessage);
     });
 
     it('withName', () => {
@@ -385,7 +385,7 @@ describe('Rules', () => {
 
       testTypeValidator.validate(sut);
       const result = testTypeValidator.validationResult;
-      expect(result?.errors[0].propertyName).toEqual(propertyName);
+      expect(result.errors[0].propertyName).toEqual(propertyName);
     });
   });
 
