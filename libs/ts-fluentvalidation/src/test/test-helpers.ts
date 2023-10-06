@@ -14,7 +14,8 @@ export interface TestType {
   objectProperty: TestSubType;
   optionalObjectProperty?: TestSubType;
   nullableString: string | null;
-  arrayProperty: number[];
+  stringArray: string[];
+  numberArray: number[];
 }
 
 export interface TestSubType {
@@ -32,7 +33,8 @@ export function createTestTypeInstance(overwrites: Partial<TestType> = {}): Test
       stringProperty: 'nestedString'
     },
     nullableString: null,
-    arrayProperty: [],
+    stringArray: [],
+    numberArray: [],
     ...overwrites
   };
 }
