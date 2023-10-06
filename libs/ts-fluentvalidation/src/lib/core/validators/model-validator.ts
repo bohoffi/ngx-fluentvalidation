@@ -4,10 +4,11 @@ import { TypeRuleBuilder, ValidatorBehaviourBuilder } from '../rules/rule-builde
 import { ArrayKeyOf, CascadeMode, KeyOf } from '../types';
 import { AbstractValidator } from './abstract-validator';
 import { createValidatorForArrayProperty, createValidatorForProperty } from './factory';
-import { HasCascadeBehaviour, IValidator } from './interfaces';
+import { HasCascadeBehaviour, HasPropertyName, IValidator } from './interfaces';
+import { ValidationOptions } from './validation-options';
 
 export class ModelValidator<TModel> extends AbstractValidator implements IValidator<TModel> {
-  protected readonly propertyValidators: (IValidator<TModel> & HasCascadeBehaviour)[] = [];
+  protected readonly propertyValidators: (IValidator<TModel> & HasCascadeBehaviour & HasPropertyName<TModel>)[] = [];
 
   /**
    * Specifies the cascade mode for all property validation chains. Setting this will overwrite all property chain specific modes.
@@ -59,11 +60,19 @@ export class ModelValidator<TModel> extends AbstractValidator implements IValida
   /**
    * Validates a model against the configured property chains. Failures will get stored in the `validationResult` property.
    * @param model Model to validate
+   * @param options options to control validation behavior
    * @returns `true` if the model is valid; otherwise `false`
    */
-  validate(model: TModel): boolean {
+  validate(model: TModel, options: ValidationOptions<TModel> = {}): boolean {
     let validationFailed = false;
-    for (const validator of this.propertyValidators) {
+
+    const validatorsToExecute = options.includeProperties
+      ? this.propertyValidators.filter(validator =>
+          (options.includeProperties ?? []).find(includedProperty => validator.propertyName === includedProperty)
+        )
+      : this.propertyValidators;
+
+    for (const validator of validatorsToExecute) {
       if (this.ruleLevelCascadeMode !== null) {
         validator.cascade(this.ruleLevelCascadeMode);
       }
@@ -76,14 +85,12 @@ export class ModelValidator<TModel> extends AbstractValidator implements IValida
       }
     }
 
-    this.result = validationFailed
-      ? new ValidationResult(
-          this.propertyValidators
-            .map(validator => validator.validationResult)
-            .filter((result): result is ValidationResult => result instanceof ValidationResult)
-            .flatMap(result => result.errors)
-        )
-      : null;
+    this.result = ValidationResult.withFailures(
+      this.propertyValidators
+        .map(validator => validator.validationResult)
+        .filter((result): result is ValidationResult => result instanceof ValidationResult)
+        .flatMap(result => result.errors)
+    );
     return validationFailed === false;
   }
 }
