@@ -101,28 +101,28 @@ describe('Rules', () => {
       const sut = createTestTypeInstance();
 
       testTypeValidator.for('stringProperty').length({ minLength: 3, maxLength: 4 });
-      testTypeValidator.for('arrayProperty').length({ minLength: 1, maxLength: 1 });
+      testTypeValidator.for('numberArray').length({ minLength: 1, maxLength: 1 });
 
       const isValid = testTypeValidator.validate(sut);
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty', 'arrayProperty'])).toBe(true);
+      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty', 'numberArray'])).toBe(true);
     });
 
     it('maxLength', () => {
       const sut = createTestTypeInstance({
-        arrayProperty: [1, 2]
+        numberArray: [1, 2]
       });
 
       testTypeValidator.for('stringProperty').maxLength(4);
-      testTypeValidator.for('arrayProperty').maxLength(1);
+      testTypeValidator.for('numberArray').maxLength(1);
 
       const isValid = testTypeValidator.validate(sut);
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty', 'arrayProperty'])).toBe(true);
+      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty', 'numberArray'])).toBe(true);
     });
 
     it('minLength', () => {
@@ -131,28 +131,28 @@ describe('Rules', () => {
       });
 
       testTypeValidator.for('stringProperty').minLength(1);
-      testTypeValidator.for('arrayProperty').minLength(1);
+      testTypeValidator.for('numberArray').minLength(1);
 
       const isValid = testTypeValidator.validate(sut);
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty', 'arrayProperty'])).toBe(true);
+      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty', 'numberArray'])).toBe(true);
     });
 
     it('empty', () => {
       const sut = createTestTypeInstance({
-        arrayProperty: [1]
+        numberArray: [1]
       });
 
       testTypeValidator.for('stringProperty').empty();
-      testTypeValidator.for('arrayProperty').empty();
+      testTypeValidator.for('numberArray').empty();
 
       const isValid = testTypeValidator.validate(sut);
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty', 'arrayProperty'])).toBe(true);
+      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty', 'numberArray'])).toBe(true);
     });
 
     it('notEmpty', () => {
@@ -161,13 +161,13 @@ describe('Rules', () => {
       });
 
       testTypeValidator.for('stringProperty').notEmpty();
-      testTypeValidator.for('arrayProperty').notEmpty();
+      testTypeValidator.for('numberArray').notEmpty();
 
       const isValid = testTypeValidator.validate(sut);
       expect(isValid).toBe(false);
       const validationResult = testTypeValidator.validationResult;
       expect(validationResult).not.toBeNull();
-      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty', 'arrayProperty'])).toBe(true);
+      expect(hasErrorsFor(validationResult?.errors || [], ['stringProperty', 'numberArray'])).toBe(true);
     });
   });
 

@@ -12,10 +12,10 @@
 ## Extension - Phase I
 
 - Validator
-  - [ ] set of rules for iterable properties
+  - [x] set of rules for iterable properties (#9)
   - [ ] [Cascading of rules](https://docs.fluentvalidation.net/en/latest/cascade.html) (break on first fail)
 - Rules
-  - Cross-property comparison rules (add possibility to compare against another property value)
+  - Cross-property comparison rules (add possibility to compare against another property value) (#8)
     - [x] notEqual
     - [x] equal
     - [x] lessThan

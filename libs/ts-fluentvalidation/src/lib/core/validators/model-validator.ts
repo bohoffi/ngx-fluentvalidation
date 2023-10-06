@@ -1,13 +1,13 @@
 import { ValidationResult } from '../result/validation-result';
-import { RuleBuilder } from '../rules/rule-builder';
+import { ArrayRuleBuilder, RuleBuilder } from '../rules/rule-builder';
 import { TypeRuleBuilder } from '../rules/rule-builders';
-import { KeyOf } from '../types';
+import { ArrayKeyOf, KeyOf } from '../types';
 import { AbstractValidator } from './abstract-validator';
-import { createValidatorForProperty } from './factory';
-import { IPropertyValidator, IValidator } from './interfaces';
+import { createValidatorForArrayProperty, createValidatorForProperty } from './factory';
+import { IValidator } from './interfaces';
 
 export class ModelValidator<TModel> extends AbstractValidator implements IValidator<TModel> {
-  protected readonly propertyValidators: IPropertyValidator<TModel, TModel[KeyOf<TModel>]>[] = [];
+  protected readonly propertyValidators: IValidator<TModel>[] = [];
 
   for<PropertyName extends KeyOf<TModel>, TProperty extends TModel[PropertyName]>(
     propertyName: PropertyName
@@ -18,10 +18,17 @@ export class ModelValidator<TModel> extends AbstractValidator implements IValida
     return ruleBuilder.getAllRules() as unknown as TypeRuleBuilder<TModel, TProperty>;
   }
 
-  validate(value: TModel): boolean {
-    const validationFailed = this.propertyValidators
-      .map(validator => validator.validateProperty(value[validator.propertyName], value))
-      .some(result => result === false);
+  forEach<PropertyName extends ArrayKeyOf<TModel>, TProperty extends TModel[PropertyName] & Array<unknown>>(
+    propertyName: PropertyName
+  ): TypeRuleBuilder<TModel, TProperty[0]> {
+    const propertyValidator = createValidatorForArrayProperty<TModel, PropertyName, TProperty>(propertyName);
+    this.propertyValidators.push(propertyValidator);
+    const ruleBuilder = new ArrayRuleBuilder<TModel, TProperty>(propertyValidator);
+    return ruleBuilder.getAllRules() as unknown as TypeRuleBuilder<TModel, TProperty[0]>;
+  }
+
+  validate(model: TModel): boolean {
+    const validationFailed = this.propertyValidators.map(validator => validator.validate(model)).some(result => result === false);
     this.result = validationFailed
       ? new ValidationResult(
           this.propertyValidators
