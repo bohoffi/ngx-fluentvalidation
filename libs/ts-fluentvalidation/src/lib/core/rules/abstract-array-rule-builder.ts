@@ -1,4 +1,4 @@
-import { ApplyConditionTo } from '../types';
+import { ApplyConditionTo, CascadeMode } from '../types';
 import { IArrayPropertyValidator, IValidator } from '../validators/interfaces';
 import { EqualsRule } from './common/equals-rule';
 import { IsNotNullRule } from './common/is-not-null-rule';
@@ -31,7 +31,8 @@ import {
   StringProperty,
   StringRuleBuilder,
   LengthProperty,
-  LengthRuleBuilder
+  LengthRuleBuilder,
+  ValidatorBehaviourBuilder
 } from './rule-builders';
 import { CreditCardRule } from './string/credit-card-rule';
 import { MatchesRule } from './string/matches-rules';
@@ -45,12 +46,14 @@ export abstract class AbstractArrayRuleBuilder<TModel, TProperty extends Array<u
 
   constructor(private readonly validator: IArrayPropertyValidator<TModel, TProperty>) {}
 
-  protected getTypeRules(): ReturnType<AbstractArrayRuleBuilder<TModel, TProperty>['getCommonRules']> &
+  protected getTypeRules(): ReturnType<AbstractArrayRuleBuilder<TModel, TProperty>['getValidatorBehaviours']> &
+    ReturnType<AbstractArrayRuleBuilder<TModel, TProperty>['getCommonRules']> &
     ReturnType<AbstractArrayRuleBuilder<TModel, TProperty>['getStringRules']> &
     ReturnType<AbstractArrayRuleBuilder<TModel, TProperty>['getNumberRules']> &
     ReturnType<AbstractArrayRuleBuilder<TModel, TProperty>['getObjectRules']> &
     ReturnType<AbstractArrayRuleBuilder<TModel, TProperty>['getLengthRules']> {
     return {
+      ...this.getValidatorBehaviours(),
       ...this.getCommonRules(),
       ...this.getStringRules(),
       ...this.getNumberRules(),
@@ -60,6 +63,12 @@ export abstract class AbstractArrayRuleBuilder<TModel, TProperty extends Array<u
   }
 
   public abstract getAllRules(): object;
+
+  private getValidatorBehaviours(): RuleBuilderContract<Pick<ValidatorBehaviourBuilder<TModel, TProperty>, 'cascade'>> {
+    return {
+      cascade: this.cascade
+    };
+  }
 
   private getRulesWithExtensionsAndConditions(): RuleBuilderContract<
     Pick<ExtendedRuleBuilder<TModel, TProperty[0]>, 'withMessage' | 'withName' | 'when' | 'unless'>
@@ -131,6 +140,16 @@ export abstract class AbstractArrayRuleBuilder<TModel, TProperty extends Array<u
       notEmpty: this.notEmpty
     };
   }
+
+  // validator behaviour
+  public cascade = (cascadeMode: CascadeMode) => {
+    this.validator.cascade(cascadeMode);
+    return {
+      ...this.getAllRules(),
+      when: this.when,
+      unless: this.unless
+    };
+  };
 
   // extensions
   public withMessage = (message: string) => {

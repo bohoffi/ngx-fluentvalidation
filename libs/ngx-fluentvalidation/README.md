@@ -13,7 +13,7 @@
 
 - Validator
   - [x] set of rules for iterable properties (#9)
-  - [ ] [Cascading of rules](https://docs.fluentvalidation.net/en/latest/cascade.html) (break on first fail)
+  - [ ] [Cascading of rules](https://docs.fluentvalidation.net/en/latest/cascade.html) (break on first fail) (#7)
 - Rules
   - Cross-property comparison rules (add possibility to compare against another property value) (#8)
     - [x] notEqual

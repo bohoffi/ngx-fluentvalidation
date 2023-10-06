@@ -328,6 +328,39 @@ describe('Rules', () => {
     });
   });
 
+  describe('validator behaviour', () => {
+    describe('cascade mode', () => {
+      it('set on property chain', () => {
+        const sut = createTestTypeInstance();
+
+        // execute both rules
+        testTypeValidator.for('stringProperty').notEqual('string').minLength(7);
+        // stop cascading after `notEqual` fails
+        testTypeValidator.for('stringPropertyTwo').cascade('Stop').notEqual('string').minLength(7);
+
+        testTypeValidator.validate(sut);
+        const result = testTypeValidator.validationResult;
+        expect(result?.errors.filter(err => err.propertyName === 'stringProperty')).toHaveLength(2);
+        expect(result?.errors.filter(err => err.propertyName === 'stringPropertyTwo')).toHaveLength(1);
+      });
+
+      it('validator.ruleLevelCascadeMode', () => {
+        const sut = createTestTypeInstance();
+
+        // overwrites property chain setting
+        testTypeValidator.ruleLevelCascadeMode = 'Stop';
+        // stop cascading after `notEqual` fails even though 'Continue' is set
+        testTypeValidator.for('stringProperty').cascade('Continue').notEqual('string').minLength(7);
+        testTypeValidator.for('stringPropertyTwo').notEqual('string').minLength(7);
+
+        testTypeValidator.validate(sut);
+        const result = testTypeValidator.validationResult;
+        expect(result?.errors.filter(err => err.propertyName === 'stringProperty')).toHaveLength(1);
+        expect(result?.errors.filter(err => err.propertyName === 'stringPropertyTwo')).toHaveLength(1);
+      });
+    });
+  });
+
   describe('extensions', () => {
     it('withMessage', () => {
       const sut = createTestTypeInstance({
