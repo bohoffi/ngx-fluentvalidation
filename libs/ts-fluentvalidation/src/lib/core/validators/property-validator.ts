@@ -1,12 +1,13 @@
 import { ValidationFailure } from '../result/validation-failure';
 import { ValidationResult } from '../result/validation-result';
 import { PropertyRule } from '../rules/property-rule';
-import { ArrayKeyOf, KeyOf } from '../types';
+import { ArrayKeyOf, CascadeMode, KeyOf } from '../types';
 import { AbstractValidator } from './abstract-validator';
 import { IArrayPropertyValidator, IPropertyValidator } from './interfaces';
 
 export class PropertyValidator<TModel, TProperty> extends AbstractValidator implements IPropertyValidator<TModel, TProperty> {
   private readonly rules: PropertyRule<TModel, TProperty>[] = [];
+  private cascadeMode: CascadeMode = 'Continue';
 
   get validationRules(): PropertyRule<TModel, TProperty>[] {
     return this.rules;
@@ -21,9 +22,23 @@ export class PropertyValidator<TModel, TProperty> extends AbstractValidator impl
     this.rules.push(rule);
   }
 
+  public cascade(cascadeMode: CascadeMode): void {
+    this.cascadeMode = cascadeMode;
+  }
+
   validate(model: TModel): boolean {
     const value = model[this.propertyName] as TProperty;
-    const validationFailed = this.validationRules.map(rule => rule.validate(value, model)).some(result => result === false);
+    let validationFailed = false;
+    for (const rule of this.validationRules) {
+      const ruleResult = rule.validate(value, model);
+      if (ruleResult === false) {
+        validationFailed = true;
+        if (this.cascadeMode === 'Stop') {
+          break;
+        }
+      }
+    }
+
     this.result = validationFailed
       ? new ValidationResult(
           this.validationRules.map(rule => rule.validationFailure).filter((failure): failure is ValidationFailure => !!failure)
@@ -38,6 +53,7 @@ export class ArrayPropertyValidator<TModel, TProperty extends Array<unknown>>
   implements IArrayPropertyValidator<TModel, TProperty>
 {
   private readonly rules: PropertyRule<TModel, TProperty[0]>[] = [];
+  private cascadeMode: CascadeMode = 'Continue';
 
   get validationRules(): PropertyRule<TModel, TProperty[0]>[] {
     return this.rules;
@@ -52,13 +68,24 @@ export class ArrayPropertyValidator<TModel, TProperty extends Array<unknown>>
     this.rules.push(rule);
   }
 
+  public cascade(cascadeMode: CascadeMode): void {
+    this.cascadeMode = cascadeMode;
+  }
+
   validate(model: TModel): boolean {
     const value = model[this.propertyName] as TProperty;
     // TODO refactor: array validation should not overwrite failures
-    const validationFailed = value
-      .map(item => this.validationRules.map(rule => rule.validate(item, model)))
-      .flat()
-      .some(result => result === false);
+    let validationFailed = false;
+    for (const rule of this.validationRules) {
+      const ruleResult = value.map(item => rule.validate(item, model)).every(result => result === true);
+      if (ruleResult === false) {
+        validationFailed = true;
+        if (this.cascadeMode === 'Stop') {
+          break;
+        }
+      }
+    }
+
     this.result = validationFailed
       ? new ValidationResult(
           this.validationRules.map(rule => rule.validationFailure).filter((failure): failure is ValidationFailure => !!failure)

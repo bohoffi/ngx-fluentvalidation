@@ -1,4 +1,4 @@
-import { ApplyConditionTo } from '../types';
+import { ApplyConditionTo, CascadeMode } from '../types';
 import { IPropertyValidator, IValidator } from '../validators/interfaces';
 import { EqualsRule } from './common/equals-rule';
 import { IsNotNullRule } from './common/is-not-null-rule';
@@ -33,7 +33,8 @@ import {
   ObjectProperty,
   ObjectRuleBuilder,
   StringProperty,
-  StringRuleBuilder
+  StringRuleBuilder,
+  ValidatorBehaviourBuilder
 } from './rule-builders';
 
 type RuleBuilderContract<TRuleBuilder> = {
@@ -45,12 +46,14 @@ export abstract class AbstractRuleBuilder<TModel, TProperty> {
 
   constructor(private readonly validator: IPropertyValidator<TModel, TProperty>) {}
 
-  protected getTypeRules(): ReturnType<AbstractRuleBuilder<TModel, TProperty>['getCommonRules']> &
+  protected getTypeRules(): ReturnType<AbstractRuleBuilder<TModel, TProperty>['getValidatorBehaviours']> &
+    ReturnType<AbstractRuleBuilder<TModel, TProperty>['getCommonRules']> &
     ReturnType<AbstractRuleBuilder<TModel, TProperty>['getStringRules']> &
     ReturnType<AbstractRuleBuilder<TModel, TProperty>['getNumberRules']> &
     ReturnType<AbstractRuleBuilder<TModel, TProperty>['getObjectRules']> &
     ReturnType<AbstractRuleBuilder<TModel, TProperty>['getLengthRules']> {
     return {
+      ...this.getValidatorBehaviours(),
       ...this.getCommonRules(),
       ...this.getStringRules(),
       ...this.getNumberRules(),
@@ -60,6 +63,12 @@ export abstract class AbstractRuleBuilder<TModel, TProperty> {
   }
 
   public abstract getAllRules(): object;
+
+  private getValidatorBehaviours(): RuleBuilderContract<Pick<ValidatorBehaviourBuilder<TModel, TProperty>, 'cascade'>> {
+    return {
+      cascade: this.cascade
+    };
+  }
 
   private getRulesWithExtensionsAndConditions(): RuleBuilderContract<
     Pick<ExtendedRuleBuilder<TModel, TProperty>, 'withMessage' | 'withName' | 'when' | 'unless'>
@@ -131,6 +140,16 @@ export abstract class AbstractRuleBuilder<TModel, TProperty> {
       notEmpty: this.notEmpty
     };
   }
+
+  // validator behaviour
+  public cascade = (cascadeMode: CascadeMode) => {
+    this.validator.cascade(cascadeMode);
+    return {
+      ...this.getAllRules(),
+      when: this.when,
+      unless: this.unless
+    };
+  };
 
   // extensions
   public withMessage = (message: string) => {

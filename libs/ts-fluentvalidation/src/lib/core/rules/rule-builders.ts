@@ -1,4 +1,4 @@
-import { ApplyConditionTo } from '../types';
+import { ApplyConditionTo, CascadeMode } from '../types';
 import { IValidator } from '../validators/interfaces';
 
 export type StringProperty = string | null | undefined;
@@ -166,6 +166,18 @@ export type TypeRuleBuilder<TModel, TProperty> = CommonRuleBuilder<TModel, TProp
   (TProperty extends NumberProperty ? NumberRuleBuilder<TModel, TProperty> : unknown) &
   (TProperty extends ObjectProperty ? ObjectRuleBuilder<TModel, TProperty> : unknown) &
   (TProperty extends LengthProperty ? LengthRuleBuilder<TModel, TProperty> : unknown);
+
+export type ValidatorBehaviourBuilder<TModel, TProperty> = {
+  /**
+   * Specifies the cascade mode for a property validation chain.
+   *
+   * If set to `Stop` then the execution of the validation will stop once the first rule fails.
+   *
+   * If set to `Continue` - the default - then all rules will execute regardless of failures.
+   * @param cascadeMode mode to set on this rule
+   */
+  cascade(cascadeMode: CascadeMode): ConditionalRuleBuilder<TModel, TProperty>;
+};
 
 export type ConditionalRuleBuilder<TModel, TProperty> = TypeRuleBuilder<TModel, TProperty> & {
   /**

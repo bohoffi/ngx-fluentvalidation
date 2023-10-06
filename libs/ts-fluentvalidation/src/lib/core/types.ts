@@ -7,3 +7,5 @@ export type ArrayKeyOf<T> = {
 export type InferArrayItem<T> = T extends Array<infer TItem> ? TItem : T;
 
 export type ApplyConditionTo = 'AllValidators' | 'CurrentValidator';
+
+export type CascadeMode = 'Continue' | 'Stop';
