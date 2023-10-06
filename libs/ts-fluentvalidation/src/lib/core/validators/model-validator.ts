@@ -19,6 +19,14 @@ export class ModelValidator<TModel> extends AbstractValidator implements IValida
    * If set to `null` - the default - the mode set on the individual property chains will get evaluated.
    */
   public ruleLevelCascadeMode: CascadeMode | null = null;
+  /**
+   * Specifies the cascade mode for a validator itself.
+   *
+   * If set to `Stop` the execution of the property chains will stop if any property chain fails. This results in a "fail fast" behaviour and result in a maximum of 1 error.
+   *
+   * If set to `Continue` - the default - then all property chains will execute regardless of failures.
+   */
+  public classLevelCascadeMode: CascadeMode = 'Continue';
 
   for<PropertyName extends KeyOf<TModel>, TProperty extends TModel[PropertyName]>(
     propertyName: PropertyName
@@ -39,14 +47,20 @@ export class ModelValidator<TModel> extends AbstractValidator implements IValida
   }
 
   validate(model: TModel): boolean {
-    const validationFailed = this.propertyValidators
-      .map(validator => {
-        if (this.ruleLevelCascadeMode !== null) {
-          validator.cascade(this.ruleLevelCascadeMode);
+    let validationFailed = false;
+    for (const validator of this.propertyValidators) {
+      if (this.ruleLevelCascadeMode !== null) {
+        validator.cascade(this.ruleLevelCascadeMode);
+      }
+      const validatorResult = validator.validate(model);
+      if (validatorResult === false) {
+        validationFailed = true;
+        if (this.classLevelCascadeMode === 'Stop') {
+          break;
         }
-        return validator.validate(model);
-      })
-      .some(result => result === false);
+      }
+    }
+
     this.result = validationFailed
       ? new ValidationResult(
           this.propertyValidators
