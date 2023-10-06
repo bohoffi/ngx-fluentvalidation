@@ -1,6 +1,11 @@
 import { isLengthProperty } from '../guards';
 import { PropertyRule } from '../property-rule';
 
+/**
+ * Defines a `not empty` validation.
+ *
+ * Validation will fail if the values length is equal to 0.
+ */
 export class NotEmptyRule<TModel, TProperty> extends PropertyRule<TModel, TProperty> {
   constructor() {
     super(value => {

@@ -1,5 +1,10 @@
 import { PropertyRule } from '../property-rule';
 
+/**
+ * Defines a `is positive` validation.
+ *
+ * Validation will fail if the value less than `1`.
+ */
 export class IsPositiveRule<TModel, TProperty> extends PropertyRule<TModel, TProperty> {
   constructor() {
     super(value => {

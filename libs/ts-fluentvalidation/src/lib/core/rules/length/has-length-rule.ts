@@ -1,6 +1,12 @@
 import { PropertyRule } from '../property-rule';
 import { isLengthProperty } from '../guards';
 
+/**
+ * Defines a `min/max length` validation.
+ *
+ * Validation will fail if the length of the value is either less then the minLength or greater then maxLength.
+ * @param options The options specifying the range to check against
+ */
 export class HasLengthRule<TModel, TProperty> extends PropertyRule<TModel, TProperty> {
   constructor(private readonly options: { minLength: number; maxLength: number }) {
     super(value => {

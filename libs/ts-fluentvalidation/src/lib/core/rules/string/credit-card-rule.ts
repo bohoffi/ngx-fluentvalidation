@@ -1,6 +1,10 @@
 import { PropertyRule } from '../property-rule';
 
-// using the Luhn algorythm
+/**
+ * Defines a credit card number validation. This validation uses the Luhn algorythm.
+ *
+ * Validation will fail if the value is not a valid credit card number.
+ */
 export class CreditCardRule<TModel, TProperty> extends PropertyRule<TModel, TProperty> {
   constructor() {
     super(value => this.validateInternal(value), 'Value is not a valid credit card number.');
