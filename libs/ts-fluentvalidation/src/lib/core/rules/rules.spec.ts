@@ -1,5 +1,6 @@
-import { TestSubType, TestTypeValidator, createTestTypeInstance, hasErrorsFor } from '../../../test/test-helpers';
+import { TestSubType, TestType, TestTypeValidator, createTestTypeInstance, hasErrorsFor } from '../../../test/test-helpers';
 import { ModelValidator } from '../validators/model-validator';
+import { PropertyRule } from './property-rule';
 
 describe('Rules', () => {
   let testTypeValidator: TestTypeValidator;
@@ -92,6 +93,48 @@ describe('Rules', () => {
         const validationResult = testTypeValidator.validationResult;
         expect(validationResult).not.toBeNull();
         expect(hasErrorsFor(validationResult.errors, ['numberProperty'])).toBe(true);
+      });
+    });
+
+    describe('withCustomRule', () => {
+      class RevertedSecondHalfStringEqualsRule<TModel> extends PropertyRule<TModel, string> {
+        constructor(public referenceValue: string) {
+          super(value => {
+            const reverted = (value ?? '').split('').reverse().join('');
+            const secondHalf = this.getSecondHalf(reverted);
+            return secondHalf === this.referenceValue;
+          }, `The reverted second half of the string should be equal to ${referenceValue}`);
+        }
+
+        private getSecondHalf(value: string): string {
+          const arr = value.split('');
+          return arr
+            .slice(Math.floor(arr.length / 2))
+            .join('')
+            .trim();
+        }
+      }
+
+      it('should execute a custom rule when passed', () => {
+        const sut = createTestTypeInstance({
+          stringProperty: 'HelloWorld'
+        });
+
+        const customRuleInstance = new RevertedSecondHalfStringEqualsRule<TestType>('dlroW');
+        testTypeValidator.for('stringProperty').withCustomRule(customRuleInstance);
+
+        let isValid = testTypeValidator.validate(sut);
+        expect(isValid).toBe(false);
+        let validationResult = testTypeValidator.validationResult;
+        expect(validationResult.errors).toHaveLength(1);
+        expect(validationResult.errors[0].errorMessage).toEqual('The reverted second half of the string should be equal to dlroW');
+
+        // update reference value
+        customRuleInstance.referenceValue = 'olleH';
+        isValid = testTypeValidator.validate(sut);
+        expect(isValid).toBe(true);
+        validationResult = testTypeValidator.validationResult;
+        expect(validationResult.errors).toHaveLength(0);
       });
     });
   });

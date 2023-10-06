@@ -1,5 +1,6 @@
 import { ApplyConditionTo, CascadeMode } from '../types';
 import { IValidator } from '../validators/interfaces';
+import { PropertyRule } from './property-rule';
 
 export type StringProperty = string | null | undefined;
 export type NumberProperty = number | bigint | null | undefined;
@@ -40,6 +41,11 @@ export type CommonRuleBuilder<TModel, TProperty> = {
    * @param predicate Condition to check against
    */
   must(predicate: (value: TProperty | null | undefined, model: TModel) => boolean): ExtendedRuleBuilder<TModel, TProperty>;
+  /**
+   * Defines a custom validation passed by the user.
+   * @param customRule `PropertyRule` implementation to execute
+   */
+  withCustomRule(customRule: PropertyRule<TModel, TProperty>): ExtendedRuleBuilder<TModel, TProperty>;
 };
 
 export type StringRuleBuilder<TModel, TProperty extends StringProperty> = {
