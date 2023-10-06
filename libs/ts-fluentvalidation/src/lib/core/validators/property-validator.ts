@@ -42,11 +42,9 @@ export class PropertyValidator<TModel, TProperty> extends AbstractValidator impl
       }
     }
 
-    this.result = validationFailed
-      ? new ValidationResult(
-          this.validationRules.map(rule => rule.validationFailure).filter((failure): failure is ValidationFailure => !!failure)
-        )
-      : null;
+    this.result = ValidationResult.withFailures(
+      this.validationRules.map(rule => rule.validationFailure).filter((failure): failure is ValidationFailure => !!failure)
+    );
     return validationFailed === false;
   }
 }
@@ -92,11 +90,9 @@ export class ArrayPropertyValidator<TModel, TProperty extends Array<unknown>>
       }
     }
 
-    this.result = validationFailed
-      ? new ValidationResult(
-          this.validationRules.map(rule => rule.validationFailure).filter((failure): failure is ValidationFailure => !!failure)
-        )
-      : null;
+    this.result = ValidationResult.withFailures(
+      this.validationRules.map(rule => rule.validationFailure).filter((failure): failure is ValidationFailure => !!failure)
+    );
     return validationFailed === false;
   }
 }
