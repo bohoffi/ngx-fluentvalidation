@@ -5,6 +5,9 @@ import { ArrayKeyOf, CascadeMode, KeyOf } from '../types';
 import { AbstractValidator } from './abstract-validator';
 import { IArrayPropertyValidator, IPropertyValidator } from './interfaces';
 
+/**
+ * Validator for a specific property responsible for holding the defined rules and executing them against a property value.
+ */
 export class PropertyValidator<TModel, TProperty> extends AbstractValidator implements IPropertyValidator<TModel, TProperty> {
   private readonly rules: PropertyRule<TModel, TProperty>[] = [];
   private cascadeMode: CascadeMode = 'Continue';
@@ -48,6 +51,9 @@ export class PropertyValidator<TModel, TProperty> extends AbstractValidator impl
   }
 }
 
+/**
+ * Validator for a specific array property responsible for holding the defined rules and executing them against all array items.
+ */
 export class ArrayPropertyValidator<TModel, TProperty extends Array<unknown>>
   extends AbstractValidator
   implements IArrayPropertyValidator<TModel, TProperty>

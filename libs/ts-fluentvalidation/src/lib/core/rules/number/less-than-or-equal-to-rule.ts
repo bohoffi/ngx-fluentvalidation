@@ -1,6 +1,12 @@
 import { hasNoValue, isCallable, isNumberProperty } from '../guards';
 import { PropertyRule } from '../property-rule';
 
+/**
+ * Defines a `greater than or equals` validation.
+ *
+ * Validation will fail if the value is less than the given reference value.
+ * @param referenceValue The value to compare against
+ */
 export class LessThanOrEqualToRule<TModel, TProperty> extends PropertyRule<TModel, TProperty> {
   constructor(private readonly referenceValue: number | ((model: TModel) => TProperty | null | undefined)) {
     super(

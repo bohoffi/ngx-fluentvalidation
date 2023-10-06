@@ -28,6 +28,11 @@ export class ModelValidator<TModel> extends AbstractValidator implements IValida
    */
   public classLevelCascadeMode: CascadeMode = 'Continue';
 
+  /**
+   * Defines a property chain (or validation pipeline) for a specific property.
+   * @param propertyName Name of the chains property
+   * @returns a rule builder to chain multiple validation rules
+   */
   for<PropertyName extends KeyOf<TModel>, TProperty extends TModel[PropertyName]>(
     propertyName: PropertyName
   ): TypeRuleBuilder<TModel, TProperty> & ValidatorBehaviourBuilder<TModel, TProperty> {
@@ -37,6 +42,11 @@ export class ModelValidator<TModel> extends AbstractValidator implements IValida
     return ruleBuilder.getAllRules() as unknown as TypeRuleBuilder<TModel, TProperty> & ValidatorBehaviourBuilder<TModel, TProperty>;
   }
 
+  /**
+   * Defines a property chain (or validation pipeline) for a specific array property. All rules will be executed against every item contained in the array.
+   * @param propertyName Name of the chains property
+   * @returns a rule builder to chain multiple validation rules
+   */
   forEach<PropertyName extends ArrayKeyOf<TModel>, TProperty extends TModel[PropertyName] & Array<unknown>>(
     propertyName: PropertyName
   ): TypeRuleBuilder<TModel, TProperty[0]> {
@@ -46,6 +56,11 @@ export class ModelValidator<TModel> extends AbstractValidator implements IValida
     return ruleBuilder.getAllRules() as unknown as TypeRuleBuilder<TModel, TProperty[0]> & ValidatorBehaviourBuilder<TModel, TProperty[0]>;
   }
 
+  /**
+   * Validates a model against the configured property chains. Failures will get stored in the `validationResult` property.
+   * @param model Model to validate
+   * @returns `true` if the model is valid; otherwise `false`
+   */
   validate(model: TModel): boolean {
     let validationFailed = false;
     for (const validator of this.propertyValidators) {

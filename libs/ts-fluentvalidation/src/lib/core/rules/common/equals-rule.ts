@@ -1,6 +1,12 @@
 import { isCallable } from '../guards';
 import { PropertyRule } from '../property-rule';
 
+/**
+ * Defines an `equal` validation.
+ *
+ * Validation will fail if the value is not equal to the given reference value.
+ * @param referenceValue The value to compare against
+ */
 export class EqualsRule<TModel, TProperty> extends PropertyRule<TModel, TProperty> {
   constructor(private readonly referenceValue: TProperty | ((model: TModel) => TProperty | null | undefined)) {
     super(

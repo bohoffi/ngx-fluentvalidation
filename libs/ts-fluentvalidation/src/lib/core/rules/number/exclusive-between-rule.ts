@@ -1,5 +1,11 @@
 import { PropertyRule } from '../property-rule';
 
+/**
+ * Defines an `exclusive between` validation.
+ *
+ * Validation will fail if the value is not inside the given range - `min/max` are not part of the range.
+ * @param options The options specifying the range to check against
+ */
 export class ExclusiveBetweenRule<TModel, TProperty> extends PropertyRule<TModel, TProperty> {
   constructor(private readonly options: { min: number; max: number }) {
     super(value => {
