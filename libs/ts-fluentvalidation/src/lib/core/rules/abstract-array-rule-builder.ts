@@ -101,7 +101,8 @@ export abstract class AbstractArrayRuleBuilder<TModel, TProperty extends Array<u
       notNull: this.notNull,
       equal: this.equal,
       notEqual: this.notEqual,
-      must: this.must
+      must: this.must,
+      withCustomRule: this.withCustomRule
     };
   }
 
@@ -209,6 +210,10 @@ export abstract class AbstractArrayRuleBuilder<TModel, TProperty extends Array<u
     this.addRule(new MustRule(predicate));
     return this.getRulesWithExtensionsAndConditions();
   };
+  public withCustomRule = (customRule: PropertyRule<TModel, TProperty[0]>) => {
+    this.addRule(customRule);
+    return this.getRulesWithExtensionsAndConditions();
+  };
 
   // string rules
   public creditCard = () => {
@@ -233,7 +238,7 @@ export abstract class AbstractArrayRuleBuilder<TModel, TProperty extends Array<u
     this.addRule(new LessThanRule(referenceValue));
     return this.getRulesWithExtensionsAndConditions();
   };
-  lessThanOrEqualTo = (referenceValue: number | ((model: TModel) => TProperty[0] | null | undefined)) => {
+  public lessThanOrEqualTo = (referenceValue: number | ((model: TModel) => TProperty[0] | null | undefined)) => {
     this.addRule(new LessThanOrEqualToRule(referenceValue));
     return this.getRulesWithExtensionsAndConditions();
   };
