@@ -1,5 +1,7 @@
-import { hasNoValue, isCallable, isNumberProperty } from '../guards';
+import { comparator } from '../comparator';
+import { isCallable, isDateProperty, isNumberProperty } from '../guards';
 import { PropertyRule } from '../property-rule';
+import { NumberProperty, DateProperty } from '../rule-builders';
 
 /**
  * Defines a `greater than` validation.
@@ -8,20 +10,14 @@ import { PropertyRule } from '../property-rule';
  * @param referenceValue The value to compare against
  */
 export class GreaterThanRule<TModel, TProperty> extends PropertyRule<TModel, TProperty> {
-  constructor(private readonly referenceValue: number | ((model: TModel) => TProperty | null | undefined)) {
+  constructor(private readonly referenceValue: TProperty | ((model: TModel) => TProperty | null | undefined)) {
     super(
       (value, model) => {
-        if (!isNumberProperty(value)) {
-          throw new TypeError('Passed a non-numeric value to a numeric rule.');
+        if (isNumberProperty(value) && (isNumberProperty(this.referenceValue) || isCallable<NumberProperty>(this.referenceValue))) {
+          return comparator.greaterThan(value, isCallable(this.referenceValue) ? this.referenceValue(model) : this.referenceValue);
         }
-        if (isCallable(this.referenceValue)) {
-          const referenceValue = this.referenceValue(model);
-          if (!hasNoValue(value) && isNumberProperty(referenceValue) && !hasNoValue(referenceValue)) {
-            return value > referenceValue;
-          }
-        }
-        if (!hasNoValue(value) && !hasNoValue(referenceValue) && !isCallable(this.referenceValue)) {
-          return value > this.referenceValue;
+        if (isDateProperty(value) && (isDateProperty(this.referenceValue) || isCallable<DateProperty>(this.referenceValue))) {
+          return comparator.greaterThan(value, isCallable(this.referenceValue) ? this.referenceValue(model) : this.referenceValue);
         }
         return null;
       },

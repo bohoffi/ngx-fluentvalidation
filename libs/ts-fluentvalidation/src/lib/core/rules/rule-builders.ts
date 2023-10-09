@@ -6,6 +6,7 @@ export type StringProperty = string | null | undefined;
 export type NumberProperty = number | bigint | null | undefined;
 export type ObjectProperty = object | null | undefined;
 export type LengthProperty = { length: number } | null | undefined;
+export type DateProperty = Date | null | undefined;
 
 export type CommonRuleBuilder<TModel, TProperty> = {
   /**
@@ -66,34 +67,6 @@ export type StringRuleBuilder<TModel, TProperty extends StringProperty> = {
 
 export type NumberRuleBuilder<TModel, TProperty extends NumberProperty> = {
   /**
-   * Defines a `less than` validation.
-   *
-   * Validation will fail if the value is equal to or greater than the given reference value.
-   * @param referenceValue The value to compare against
-   */
-  lessThan(referenceValue: number | ((model: TModel) => TProperty)): ExtendedRuleBuilder<TModel, TProperty>;
-  /**
-   * Defines a `less than or equal to` validation.
-   *
-   * Validation will fail if the value is greater than the given reference value.
-   * @param referenceValue The value to compare against
-   */
-  lessThanOrEqualTo(referenceValue: number | ((model: TModel) => TProperty)): ExtendedRuleBuilder<TModel, TProperty>;
-  /**
-   * Defines a `greater than` validation.
-   *
-   * Validation will fail if the value is equal to or less than the given reference value.
-   * @param referenceValue The value to compare against
-   */
-  greaterThan(referenceValue: number | ((model: TModel) => TProperty)): ExtendedRuleBuilder<TModel, TProperty>;
-  /**
-   * Defines a `greater than or equals` validation.
-   *
-   * Validation will fail if the value is less than the given reference value.
-   * @param referenceValue The value to compare against
-   */
-  greaterThanOrEqualTo(referenceValue: number | ((model: TModel) => TProperty)): ExtendedRuleBuilder<TModel, TProperty>;
-  /**
    * Defines a `is positive` validation.
    *
    * Validation will fail if the value less than `1`.
@@ -105,20 +78,6 @@ export type NumberRuleBuilder<TModel, TProperty extends NumberProperty> = {
    * Validation will fail if the value greater than `-1`.
    */
   isNegative(): ExtendedRuleBuilder<TModel, TProperty>;
-  /**
-   * Defines an `exclusive between` validation.
-   *
-   * Validation will fail if the value is not inside the given range - `min/max` are not part of the range.
-   * @param options The options specifying the range to check against
-   */
-  exclusiveBetween(options: { min: number; max: number }): ExtendedRuleBuilder<TModel, TProperty>;
-  /**
-   * Defines an `inclusive between` validation.
-   *
-   * Validation will fail if the value is not inside the given range - `min/max` are part of the range.
-   * @param options The options specifying the range to check against
-   */
-  inclusiveBetween(options: { min: number; max: number }): ExtendedRuleBuilder<TModel, TProperty>;
 };
 
 export type ObjectRuleBuilder<TModel, TProperty extends ObjectProperty> = {
@@ -167,11 +126,63 @@ export type LengthRuleBuilder<TModel, TProperty extends LengthProperty> = {
   notEmpty(): ExtendedRuleBuilder<TModel, TProperty>;
 };
 
+export type ComparisonRuleBuilder<TModel, TProperty extends NumberProperty | DateProperty> = {
+  /**
+   * Defines a `less than` validation.
+   *
+   * Validation will fail if the value is equal to or greater than the given reference value.
+   * @param referenceValue The value to compare against
+   */
+  lessThan(referenceValue: TProperty | ((model: TModel) => TProperty)): ExtendedRuleBuilder<TModel, TProperty>;
+  /**
+   * Defines a `less than or equal to` validation.
+   *
+   * Validation will fail if the value is greater than the given reference value.
+   * @param referenceValue The value to compare against
+   */
+  lessThanOrEqualTo(referenceValue: TProperty | ((model: TModel) => TProperty)): ExtendedRuleBuilder<TModel, TProperty>;
+  /**
+   * Defines a `greater than` validation.
+   *
+   * Validation will fail if the value is equal to or less than the given reference value.
+   * @param referenceValue The value to compare against
+   */
+  greaterThan(referenceValue: TProperty | ((model: TModel) => TProperty)): ExtendedRuleBuilder<TModel, TProperty>;
+  /**
+   * Defines a `greater than or equals` validation.
+   *
+   * Validation will fail if the value is less than the given reference value.
+   * @param referenceValue The value to compare against
+   */
+  greaterThanOrEqualTo(referenceValue: TProperty | ((model: TModel) => TProperty)): ExtendedRuleBuilder<TModel, TProperty>;
+  /**
+   * Defines an `exclusive between` validation.
+   *
+   * Validation will fail if the value is not inside the given range - `min/max` are not part of the range.
+   * @param options The options specifying the range to check against
+   */
+  exclusiveBetween(options: {
+    min: TProperty extends NumberProperty ? number | bigint : Date;
+    max: TProperty extends NumberProperty ? number | bigint : Date;
+  }): ExtendedRuleBuilder<TModel, TProperty>;
+  /**
+   * Defines an `inclusive between` validation.
+   *
+   * Validation will fail if the value is not inside the given range - `min/max` are part of the range.
+   * @param options The options specifying the range to check against
+   */
+  inclusiveBetween(options: {
+    min: TProperty extends NumberProperty ? number | bigint : Date;
+    max: TProperty extends NumberProperty ? number | bigint : Date;
+  }): ExtendedRuleBuilder<TModel, TProperty>;
+};
+
 export type TypeRuleBuilder<TModel, TProperty> = CommonRuleBuilder<TModel, TProperty> &
   (TProperty extends StringProperty ? StringRuleBuilder<TModel, TProperty> : unknown) &
   (TProperty extends NumberProperty ? NumberRuleBuilder<TModel, TProperty> : unknown) &
   (TProperty extends ObjectProperty ? ObjectRuleBuilder<TModel, TProperty> : unknown) &
-  (TProperty extends LengthProperty ? LengthRuleBuilder<TModel, TProperty> : unknown);
+  (TProperty extends LengthProperty ? LengthRuleBuilder<TModel, TProperty> : unknown) &
+  (TProperty extends NumberProperty | DateProperty ? ComparisonRuleBuilder<TModel, TProperty> : unknown);
 
 export type ValidatorBehaviourBuilder<TModel, TProperty> = {
   /**
