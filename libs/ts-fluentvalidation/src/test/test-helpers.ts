@@ -13,6 +13,8 @@ export interface TestType {
   optionalNumberProperty?: number;
   objectProperty: TestSubType;
   optionalObjectProperty?: TestSubType;
+  dateProperty: Date;
+  datePropertyTwo: Date;
   nullableString: string | null;
   stringArray: string[];
   numberArray: number[];
@@ -32,6 +34,8 @@ export function createTestTypeInstance(overwrites: Partial<TestType> = {}): Test
     objectProperty: {
       stringProperty: 'nestedString'
     },
+    dateProperty: new Date(2023, 0, 1),
+    datePropertyTwo: new Date(2023, 0, 1),
     nullableString: null,
     stringArray: [],
     numberArray: [],

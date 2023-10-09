@@ -32,7 +32,9 @@ import {
   StringRuleBuilder,
   LengthProperty,
   LengthRuleBuilder,
-  ValidatorBehaviourBuilder
+  ValidatorBehaviourBuilder,
+  ComparisonRuleBuilder,
+  DateProperty
 } from './rule-builders';
 import { CreditCardRule } from './string/credit-card-rule';
 import { MatchesRule } from './string/matches-rules';
@@ -51,14 +53,16 @@ export abstract class AbstractArrayRuleBuilder<TModel, TProperty extends Array<u
     ReturnType<AbstractArrayRuleBuilder<TModel, TProperty>['getStringRules']> &
     ReturnType<AbstractArrayRuleBuilder<TModel, TProperty>['getNumberRules']> &
     ReturnType<AbstractArrayRuleBuilder<TModel, TProperty>['getObjectRules']> &
-    ReturnType<AbstractArrayRuleBuilder<TModel, TProperty>['getLengthRules']> {
+    ReturnType<AbstractArrayRuleBuilder<TModel, TProperty>['getLengthRules']> &
+    ReturnType<AbstractArrayRuleBuilder<TModel, TProperty>['getComparisonRules']> {
     return {
       ...this.getValidatorBehaviours(),
       ...this.getCommonRules(),
       ...this.getStringRules(),
       ...this.getNumberRules(),
       ...this.getObjectRules(),
-      ...this.getLengthRules()
+      ...this.getLengthRules(),
+      ...this.getComparisonRules()
     };
   }
 
@@ -115,14 +119,8 @@ export abstract class AbstractArrayRuleBuilder<TModel, TProperty extends Array<u
 
   private getNumberRules(): RuleBuilderContract<NumberRuleBuilder<TModel, NumberProperty>> {
     return {
-      lessThan: this.lessThan,
-      lessThanOrEqualTo: this.lessThanOrEqualTo,
-      greaterThan: this.greaterThan,
-      greaterThanOrEqualTo: this.greaterThanOrEqualTo,
       isPositive: this.isPositive,
-      isNegative: this.isNegative,
-      exclusiveBetween: this.exclusiveBetween,
-      inclusiveBetween: this.inclusiveBetween
+      isNegative: this.isNegative
     };
   }
 
@@ -139,6 +137,17 @@ export abstract class AbstractArrayRuleBuilder<TModel, TProperty extends Array<u
       minLength: this.minLength,
       empty: this.empty,
       notEmpty: this.notEmpty
+    };
+  }
+
+  private getComparisonRules(): RuleBuilderContract<ComparisonRuleBuilder<TModel, NumberProperty | DateProperty>> {
+    return {
+      exclusiveBetween: this.exclusiveBetween,
+      greaterThan: this.greaterThan,
+      greaterThanOrEqualTo: this.greaterThanOrEqualTo,
+      inclusiveBetween: this.inclusiveBetween,
+      lessThan: this.lessThan,
+      lessThanOrEqualTo: this.lessThanOrEqualTo
     };
   }
 
@@ -234,22 +243,6 @@ export abstract class AbstractArrayRuleBuilder<TModel, TProperty extends Array<u
   };
 
   // number rules
-  public lessThan = (referenceValue: number | ((model: TModel) => TProperty[0] | null | undefined)) => {
-    this.addRule(new LessThanRule(referenceValue));
-    return this.getRulesWithExtensionsAndConditions();
-  };
-  public lessThanOrEqualTo = (referenceValue: number | ((model: TModel) => TProperty[0] | null | undefined)) => {
-    this.addRule(new LessThanOrEqualToRule(referenceValue));
-    return this.getRulesWithExtensionsAndConditions();
-  };
-  public greaterThan = (referenceValue: number | ((model: TModel) => TProperty[0] | null | undefined)) => {
-    this.addRule(new GreaterThanRule(referenceValue));
-    return this.getRulesWithExtensionsAndConditions();
-  };
-  public greaterThanOrEqualTo = (referenceValue: number | ((model: TModel) => TProperty[0] | null | undefined)) => {
-    this.addRule(new GreaterThanOrEqualToRule(referenceValue));
-    return this.getRulesWithExtensionsAndConditions();
-  };
   public isPositive = () => {
     this.addRule(new IsPositiveRule());
     return this.getRulesWithExtensionsAndConditions();
@@ -258,11 +251,35 @@ export abstract class AbstractArrayRuleBuilder<TModel, TProperty extends Array<u
     this.addRule(new IsNegativeRule());
     return this.getRulesWithExtensionsAndConditions();
   };
-  public exclusiveBetween = (options: { min: number; max: number }) => {
+
+  // comparison rules
+  public lessThan = (referenceValue: TProperty[0] | ((model: TModel) => TProperty[0] | null | undefined)) => {
+    this.addRule(new LessThanRule(referenceValue));
+    return this.getRulesWithExtensionsAndConditions();
+  };
+  public lessThanOrEqualTo = (referenceValue: TProperty[0] | ((model: TModel) => TProperty[0] | null | undefined)) => {
+    this.addRule(new LessThanOrEqualToRule(referenceValue));
+    return this.getRulesWithExtensionsAndConditions();
+  };
+  public greaterThan = (referenceValue: TProperty[0] | ((model: TModel) => TProperty[0] | null | undefined)) => {
+    this.addRule(new GreaterThanRule(referenceValue));
+    return this.getRulesWithExtensionsAndConditions();
+  };
+  public greaterThanOrEqualTo = (referenceValue: TProperty[0] | ((model: TModel) => TProperty[0] | null | undefined)) => {
+    this.addRule(new GreaterThanOrEqualToRule(referenceValue));
+    return this.getRulesWithExtensionsAndConditions();
+  };
+  public exclusiveBetween = (options: {
+    min: TProperty[0] extends NumberProperty ? number | bigint : Date;
+    max: TProperty extends NumberProperty ? number | bigint : Date;
+  }) => {
     this.addRule(new ExclusiveBetweenRule(options));
     return this.getRulesWithExtensionsAndConditions();
   };
-  public inclusiveBetween = (options: { min: number; max: number }) => {
+  public inclusiveBetween = (options: {
+    min: TProperty[0] extends NumberProperty ? number | bigint : Date;
+    max: TProperty extends NumberProperty ? number | bigint : Date;
+  }) => {
     this.addRule(new InclusiveBetweenRule(options));
     return this.getRulesWithExtensionsAndConditions();
   };

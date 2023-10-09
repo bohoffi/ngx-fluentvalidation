@@ -20,6 +20,15 @@ export function isLengthProperty(value?: unknown): value is LengthProperty {
   return value === null || value === undefined || typeof value === 'string' || 'length' in (value as any);
 }
 
+export function isDateProperty(value?: unknown): value is Date {
+  return (
+    value === null ||
+    value === undefined ||
+    value instanceof Date ||
+    (typeof value === 'object' && ('getTime' as keyof Date) in (value as any))
+  );
+}
+
 export function isCallable<TValue>(value: any): value is (...args: any[]) => TValue {
   return typeof value === 'function';
 }
